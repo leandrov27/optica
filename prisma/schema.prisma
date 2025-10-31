@@ -1,0 +1,180 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "../src/generated/prisma"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+// ----------------------------------------------------------------------
+
+model User {
+    id          Int      @id @default(autoincrement()) @map("id_usuario")
+    firstName   String   @map("nombre")
+    lastName    String   @map("apellido")
+    displayName String   @map("display_name")
+    phone       String   @unique @map("telefono")
+    document    String   @unique @map("nro_documento")
+    password    String
+    status      Status   @default(INACTIVO) @map("estado")
+    role        Role     @default(CLIENT) @map("rol")
+    createdAt   DateTime @default(now()) @map("creado_en")
+    updatedAt   DateTime @updatedAt @map("actualizado en")
+
+    @@map("usuarios")
+}
+
+model Client {
+    id           Int        @id @default(autoincrement()) @map("id_cliente")
+    firstName    String     @map("nombre") @db.VarChar(100)
+    lastName     String     @map("apellido") @db.VarChar(100)
+    displayName  String     @map("display_name")
+    birthDate    String?    @map("fecha_nacimiento")
+    email        String?    @unique @map("correo") @db.VarChar(150)
+    phone        String     @unique @map("telefono") @db.VarChar(20)
+    type         ClientType
+    observations String?    @map("observaciones")
+    createdAt    DateTime   @default(now()) @map("creado_en") @db.DateTime(0)
+
+    // Relations
+    taxInfo   TaxInfo?
+    diagnoses Diagnosis[]
+    saleNotes SaleNote[]
+
+    @@map("clientes")
+}
+
+model TaxInfo {
+    id            Int     @id @default(autoincrement()) @map("id_fiscal")
+    clientId      Int     @unique @map("id_cliente")
+    rfc           String? @unique @db.VarChar(13)
+    businessName  String  @map("razon_social") @db.VarChar(200)
+    postalCode    String? @map("cp") @db.Char(5)
+    taxRegime     String? @map("regimen_fiscal") @db.VarChar(100)
+    cfdiUse       String? @map("uso_cfdi") @db.VarChar(10)
+    paymentMethod String? @map("metodo_pago") @db.VarChar(5)
+    paymentForm   String? @map("forma_pago") @db.VarChar(5)
+    billingEmail  String? @map("correo_facturacion") @db.VarChar(150)
+    address       String? @map("domicilio")
+
+    // Relation
+    client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+    @@map("fiscales")
+}
+
+model Diagnosis {
+    id            Int     @id @default(autoincrement()) @map("id_diag")
+    clientId      Int     @map("id_cliente")
+    date          String  @map("fecha")
+    rightSphere   String? @map("od_esfera") @db.VarChar(10)
+    rightCylinder String? @map("od_cilindro") @db.VarChar(10)
+    rightAxis     String? @map("od_eje") @db.VarChar(10)
+    leftSphere    String? @map("oi_esfera") @db.VarChar(10)
+    leftCylinder  String? @map("oi_cilindro") @db.VarChar(10)
+    leftAxis      String? @map("oi_eje") @db.VarChar(10)
+    addition      String? @map("adicion") @db.VarChar(10)
+    notes         String? @map("notas")
+
+    // Relation
+    client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+    @@map("diagnosticos")
+}
+
+model Product {
+    id          Int     @id @default(autoincrement()) @map("id_producto")
+    categoryId  Int     @map("id_categoria")
+    code        String  @unique @map("codigo") @db.VarChar(50)
+    description String  @map("descripcion") @db.VarChar(255)
+    price       Decimal @map("precio") @db.Decimal(10, 2)
+    notes       String? @map("notas")
+
+    // Relations
+    noteDetails NoteDetail[]
+    category    Category     @relation(fields: [categoryId], references: [id])
+
+    @@map("productos")
+}
+
+model Category {
+    id        Int      @id @default(autoincrement()) @map("id_categoria")
+    name      String   @unique @map("categoria") @db.VarChar(100)
+    icon      String?  @map("icono")
+    createdAt DateTime @default(now()) @map("created_en")
+
+    // Relation
+    products Product[]
+
+    @@map("categorias")
+}
+
+model SaleNote {
+    id              Int      @id @default(autoincrement()) @map("id_nota")
+    folio           String?  @unique @db.VarChar(20)
+    clientId        Int      @map("id_cliente")
+    date            DateTime @default(now()) @map("fecha")
+    deliveryDate    String?  @map("fecha_entrega")
+    requiresInvoice Boolean  @default(false) @map("requiere_factura")
+    subtotal        Decimal  @db.Decimal(10, 2)
+    discount        Decimal  @map("descuento") @db.Decimal(10, 2)
+    total           Decimal  @db.Decimal(10, 2)
+
+    // Relations
+    client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+    noteDetails NoteDetail[]
+
+    @@map("notas_venta")
+}
+
+model NoteDetail {
+    id          Int     @id @default(autoincrement()) @map("id_detalle")
+    noteId      Int     @map("id_nota")
+    productId   Int     @map("id_producto")
+    quantity    Int     @map("cantidad")
+    unitPrice   Decimal @map("precio_unitario") @db.Decimal(10, 2)
+    discountPct Decimal @default(0) @map("descuento_pct") @db.Decimal(5, 2)
+    amount      Decimal @map("importe") @db.Decimal(10, 2)
+
+    // Relations
+    note    SaleNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+    product Product  @relation(fields: [productId], references: [id])
+
+    @@index([noteId, productId], name: "detalles_nota_compuesto_idx")
+    @@map("detalles_nota")
+}
+
+model Setting {
+    id              Int     @id @default(autoincrement()) @map("id_ajustes")
+    name            String  @default("EmpreSys") @map("nombre")
+    address         String  @default("México") @map("direccion")
+    phone           String  @default("+526142445300") @map("telefono")
+    //
+    companyLogoUrl  String? @map("logo_empresa")
+    businessLogoUrl String? @map("logo_negocio")
+    //
+    localeCode      String  @default("es-MX") @map("codigo_pais")
+    currencyCode    String  @default("MXN") @map("codigo_moneda")
+    currencySymbol  String  @default("$") @map("simbolo_moneda")
+
+    @@map("ajustes")
+}
+
+// ----------------------------------------------------------------------
+
+enum ClientType {
+    INDIVIDUAL
+    BUSINESS
+}
+
+enum Status {
+    ACTIVO
+    INACTIVO
+}
+
+enum Role {
+    ADMIN
+    CLIENT
+}
