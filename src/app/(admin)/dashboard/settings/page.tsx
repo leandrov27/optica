@@ -16,7 +16,9 @@ export const metadata = {
 // ----------------------------------------------------------------------
 
 async function getSettingsData(): Promise<ISettingsData> {
-    const settingsData = await db.setting.findFirst();
+    const settingsData = await db.setting.findFirst({
+        where: { id: 1 }
+    });
 
     if (!settingsData) {
         throw new Error('No se han podido cargar los ajustes del sistema.');
