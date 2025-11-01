@@ -54,9 +54,9 @@ export async function POST(request: Request) {
                 data: {
                     phone: ADMIN_PHONE,
                     password: hashedPassword,
-                    firstName: 'Astro',
-                    lastName: 'Labs',
-                    displayName: 'Astro Labs',
+                    firstName: 'Administrador',
+                    lastName: 'Maestro',
+                    displayName: 'Administrador Maestro',
                     role: 'ADMIN',
                     status: 'ACTIVO',
                 },
@@ -64,9 +64,9 @@ export async function POST(request: Request) {
         } else {
             await db.user.create({
                 data: {
-                    firstName: 'Astro',
-                    lastName: 'Labs',
-                    displayName: 'Astro Labs',
+                    firstName: 'Administrador',
+                    lastName: 'Maestro',
+                    displayName: 'Administrador Maestro',
                     document: ADMIN_DOCUMENT,
                     phone: ADMIN_PHONE,
                     password: hashedPassword,

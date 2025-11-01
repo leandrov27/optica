@@ -17,7 +17,6 @@ import DiagnosisTableRow from "./diagnosis-table-row";
 // ----------------------------------------------------------------------
 
 interface DiagnosisTableProps {
-    cliId: number;
     diagnoses: IDiagnosisData[];
     onRemove: (index: number) => void;
     onEdit: (index: number) => void;
@@ -37,13 +36,14 @@ const TABLE_HEAD = [
     { id: 'rightAxis', label: 'OD Eje', align: 'center' },
     //
     { id: 'addition', label: 'Add', align: 'center' },
+    { id: 'notes', label: 'Notas', align: 'center' },
     //
     { id: 'actions', label: 'Operaciones', align: 'center', width: 20 },
 ];
 
 // ----------------------------------------------------------------------
 
-export default function DiagnosisTable({ cliId, diagnoses, onRemove, onEdit }: DiagnosisTableProps) {
+export default function DiagnosisTable({ diagnoses, onRemove, onEdit }: DiagnosisTableProps) {
     const shouldShowNoResults = diagnoses.length === 0;
 
     return (
@@ -70,7 +70,7 @@ export default function DiagnosisTable({ cliId, diagnoses, onRemove, onEdit }: D
                     </Scrollbar>
                 </TableContainer>
             ) : (
-                <NoResultsCard description={cliId > 0 && diagnoses.length === 0 ? "No se ha encontrado ningún diagnóstico asociado al cliente." : "Seleccione un cliente para ver sus diagnósticos."} />
+                <NoResultsCard description="No se ha encontrado ningún diagnóstico asociado al cliente." />
             )}
         </>
     )

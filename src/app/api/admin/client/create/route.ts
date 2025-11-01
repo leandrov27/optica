@@ -5,7 +5,7 @@ import db from "src/libs/prisma";
 // utils
 import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
-import { CreateUpdateClientWithTaxInfoSchema, type ICreateUpdateClientWithTaxInfoPayload } from "src/core/schemas";
+import { CreateUpdateClientSchema, type ICreateUpdateClientPayload } from "src/core/schemas";
 
 // ----------------------------------------------------------------------
 
@@ -20,8 +20,8 @@ export async function POST(request: Request) {
     }
 
     try {
-        const data: ICreateUpdateClientWithTaxInfoPayload = await request.json();
-        const validationSchema = CreateUpdateClientWithTaxInfoSchema.safeParse(data);
+        const data: ICreateUpdateClientPayload = await request.json();
+        const validationSchema = CreateUpdateClientSchema.safeParse(data);
 
         if (!validationSchema.success) {
             const errorMessages = validationSchema.error.issues
@@ -36,7 +36,6 @@ export async function POST(request: Request) {
 
         const parsed = validationSchema.data;
 
-        // Preparar los datos para la creación
         const clientData = {
             firstName: parsed.firstName,
             lastName: parsed.lastName,
@@ -48,33 +47,50 @@ export async function POST(request: Request) {
             observations: parsed.observations,
         };
 
-        // Si enableTaxInfo es true, agregar la relación con taxInfo
+        const diagnosesData = parsed.diagnoses.map(diagnose => ({
+            date: diagnose.date ? diagnose.date : '',
+            rightSphere: diagnose.rightSphere || null,
+            rightCylinder: diagnose.rightCylinder || null,
+            rightAxis: diagnose.rightAxis || null,
+            leftSphere: diagnose.leftSphere || null,
+            leftCylinder: diagnose.leftCylinder || null,
+            leftAxis: diagnose.leftAxis || null,
+            addition: diagnose.addition || null,
+            notes: diagnose.notes || null,
+        }));
+
         if (parsed.enableTaxInfo) {
-            // Asegurar que businessName tenga un valor por defecto si es undefined
-            const businessName = parsed.taxInfo.businessName || `${parsed.firstName} ${parsed.lastName}`;
+            const businessName = parsed.businessName || `${parsed.firstName} ${parsed.lastName}`;
 
             await db.client.create({
                 data: {
                     ...clientData,
                     taxInfo: {
                         create: {
-                            rfc: parsed.taxInfo.rfc || null,
+                            rfc: parsed.rfc || null,
                             businessName: businessName,
-                            postalCode: parsed.taxInfo.postalCode || null,
-                            taxRegime: parsed.taxInfo.taxRegime || null,
-                            cfdiUse: parsed.taxInfo.cfdiUse || null,
-                            paymentMethod: parsed.taxInfo.paymentMethod || null,
-                            paymentForm: parsed.taxInfo.paymentForm || null,
-                            billingEmail: parsed.taxInfo.billingEmail || null,
-                            address: parsed.taxInfo.address || null,
+                            postalCode: parsed.postalCode || null,
+                            taxRegime: parsed.taxRegime || null,
+                            cfdiUse: parsed.cfdiUse || null,
+                            paymentMethod: parsed.paymentMethod || null,
+                            paymentForm: parsed.paymentForm || null,
+                            billingEmail: parsed.billingEmail || null,
+                            address: parsed.address || null,
                         }
+                    },
+                    diagnoses: {
+                        create: diagnosesData
                     }
                 },
             });
         } else {
-            // Crear solo el cliente sin información fiscal
             await db.client.create({
-                data: clientData
+                data: {
+                    ...clientData,
+                    diagnoses: {
+                        create: diagnosesData
+                    }
+                }
             });
         }
 
@@ -85,10 +101,11 @@ export async function POST(request: Request) {
     } catch (error: any) {
         if (error.code === 'P2002') {
             return NextResponse.json(
-                { message: 'Teléfono o email ya existe' },
+                { message: 'Teléfono, RFC o email ya existen' },
                 { status: 409 }
             );
         }
+        
         return NextResponse.json(
             { message: error.message || 'Internal server error' },
             { status: 500 }

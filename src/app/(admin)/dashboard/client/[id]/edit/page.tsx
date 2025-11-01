@@ -22,23 +22,36 @@ async function getClientById(id: string): Promise<IClientData> {
             id: true,
             firstName: true,
             lastName: true,
-            displayName: true,
-            birthDate: true,
-            email: true,
             phone: true,
+            displayName: true,
+            email: true,
             type: true,
+            birthDate: true,
             observations: true,
             taxInfo: {
                 select: {
                     rfc: true,
                     businessName: true,
-                    postalCode: true,
                     taxRegime: true,
                     cfdiUse: true,
+                    postalCode: true,
+                    billingEmail: true,
                     paymentMethod: true,
                     paymentForm: true,
-                    billingEmail: true,
                     address: true
+                }
+            },
+            diagnoses: {
+                select: {
+                    date: true,
+                    leftAxis: true,
+                    leftSphere: true,
+                    leftCylinder: true,
+                    rightAxis: true,
+                    rightSphere: true,
+                    rightCylinder: true,
+                    addition: true,
+                    notes: true,
                 }
             }
         }

@@ -1,1 +1,0 @@
-export { default as DiagnosisListView } from './diagnosis-list-view';

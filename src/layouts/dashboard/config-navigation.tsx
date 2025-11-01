@@ -15,8 +15,6 @@ const ICONS = {
   //
   client: icon('ic_client'),
   //
-  diagnosis: icon('ic_diagnosis'),
-  //
   note: icon('ic_note'),
   //
   product: icon('ic_product'),
@@ -48,11 +46,6 @@ export function useNavData() {
             title: 'Clientes',
             path: paths.admin.client.list,
             icon: ICONS.client,
-          },
-          {
-            title: 'Diagnósticos',
-            path: paths.admin.diagnosis,
-            icon: ICONS.diagnosis,
           },
           {
             title: 'Notas',

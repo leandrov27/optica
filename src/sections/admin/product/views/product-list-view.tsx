@@ -10,7 +10,7 @@ import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 // types
-import { type ICategoryData, type IProductData } from 'src/core/schemas';
+import { type IProductData } from 'src/core/schemas';
 //
 import ProductTable from '../components/product-table';
 import ProductNewEditDialog from '../forms/product-new-edit-dialog';
@@ -20,7 +20,6 @@ import useProductDialogStore from '../stores/useProductDialogStore';
 
 interface ProductListViewProps {
     products: IProductData[];
-    categories: ICategoryData[];
     //
     searchTerm: string;
     //
@@ -36,7 +35,6 @@ interface ProductListViewProps {
 
 export default function ProductListView({
     products,
-    categories,
     //
     searchTerm,
     //
@@ -87,7 +85,6 @@ export default function ProductListView({
             />
 
             <ProductNewEditDialog
-                categories={categories}
                 openDialog={open}
                 onCloseDialog={closeDialog}
                 product={product ?? undefined}

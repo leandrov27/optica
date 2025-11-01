@@ -1,5 +1,7 @@
 'use client';
 
+// react
+import { useMemo } from 'react';
 // @mui
 import Fade from '@mui/material/Fade';
 import Card from '@mui/material/Card';
@@ -14,11 +16,19 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import FormProvider, { RHFPhoneField, RHFSelect, RHFSwitch, RHFTextField } from 'src/components/hook-form';
 import { Controller } from 'react-hook-form';
 // schemas
+import {
+  CFDI_USE_OPTIONS,
+  PAYMENT_FORM_OPTIONS,
+  TAX_REGIME_OPTIONS,
+  PaymentMethodSchema,
+  TypeSchema
+} from 'src/core/schemas/sub-schemas';
 import { type IClientData } from 'src/core/schemas';
-import { CFDI_USE_OPTIONS, PAYMENT_FORM_OPTIONS, PaymentMethodSchema, TAX_REGIME_OPTIONS, TypeSchema } from 'src/core/schemas/sub-schemas';
 //
-import useEditClient from '../hooks/useEditClient';
 import BirthtdatePicker from '../widgets/bday-picker';
+import DatePicker from '../widgets/date-picker';
+import DiagnosisTable from '../components/diagnosis-table';
+import useEditClient from '../hooks/useEditClient';
 
 // ----------------------------------------------------------------------
 
@@ -30,19 +40,43 @@ interface ClientEditFormProps {
 
 export default function ClientEditForm({ client }: ClientEditFormProps) {
   const {
-    //* hookform
-    isTaxInfoEnabled,
+    //~
     isSubmitting,
     handleSubmit,
-    onSubmit,
-    control,
+    sendForm,
     methods,
-    // &
-    handleResetTaxInfoData
+    control,
+    //*
+    isTaxInfoEnabled,
+    handleResetTaxInfoData,
+    //^
+    fields,
+    editIndex,
+    addDiagnoseItem,
+    editDiagnoseItem,
+    removeDiagnoseItem,
   } = useEditClient({ client });
 
+  const formattedFields = useMemo(() => (
+    fields.map((f, index) => ({
+      id: f.diagnosisId ?? index,
+      clientId: 0,
+      date: f.date || '',
+      rightSphere: f.rightSphere,
+      rightCylinder: f.rightCylinder,
+      rightAxis: f.rightAxis,
+      leftSphere: f.leftSphere,
+      leftCylinder: f.leftCylinder,
+      leftAxis: f.leftAxis,
+      addition: f.addition,
+      notes: f.notes,
+    }))
+  ), [fields]);
+
+  const { formState: { errors } } = methods;
+
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={handleSubmit(sendForm)}>
       <Grid container spacing={3}>
         <Grid xs={12} md={12} lg={12}>
           <Card sx={{ p: 2 }}>
@@ -73,9 +107,10 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
           </Card>
         </Grid>
 
+        {/** DATOS PERSONALES */}
         <Grid xs={12} md={isTaxInfoEnabled ? 6 : 12} lg={isTaxInfoEnabled ? 6 : 12} sx={{ transition: 'all 0.5s ease-in-out' }}>
           <Card sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6">
               Datos Personales
             </Typography>
 
@@ -138,6 +173,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
           </Card>
         </Grid>
 
+        {/** DATOS FISCALES */}
         {isTaxInfoEnabled && (
           <Fade in={isTaxInfoEnabled} timeout={2500}>
             <Grid xs={12} md={6} lg={6}>
@@ -156,15 +192,15 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
 
                 <Grid container spacing={2}>
                   <Grid xs={12} md={6} lg={4}>
-                    <RHFTextField name="taxInfo.rfc" label="RFC" placeholder="XAXX010101000" disabled={isSubmitting || !isTaxInfoEnabled} />
+                    <RHFTextField name="rfc" label="RFC" placeholder="XAXX010101000" disabled={isSubmitting || !isTaxInfoEnabled} />
                   </Grid>
 
                   <Grid xs={12} md={6} lg={8}>
-                    <RHFTextField name="taxInfo.businessName" label="Razón Social / Nombre" disabled={isSubmitting || !isTaxInfoEnabled} />
+                    <RHFTextField name="businessName" label="Razón Social / Nombre" disabled={isSubmitting || !isTaxInfoEnabled} />
                   </Grid>
 
                   <Grid xs={12} md={6} lg={12}>
-                    <RHFSelect name="taxInfo.taxRegime" label="Régimen Fiscal" disabled={isSubmitting || !isTaxInfoEnabled}>
+                    <RHFSelect name="taxRegime" label="Régimen Fiscal" disabled={isSubmitting || !isTaxInfoEnabled}>
                       {TAX_REGIME_OPTIONS.map((option) => (
                         <MenuItem key={option.key} value={option.key}>
                           {option.key} - {option.label}
@@ -174,7 +210,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                   </Grid>
 
                   <Grid xs={12} md={6} lg={12}>
-                    <RHFSelect name="taxInfo.cfdiUse" label="Régimen Fiscal" disabled={isSubmitting || !isTaxInfoEnabled}>
+                    <RHFSelect name="cfdiUse" label="Uso CFDI" disabled={isSubmitting || !isTaxInfoEnabled}>
                       {CFDI_USE_OPTIONS.map((option) => (
                         <MenuItem key={option.key} value={option.key}>
                           {option.key} - {option.label}
@@ -184,15 +220,15 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                   </Grid>
 
                   <Grid xs={12} md={6} lg={4}>
-                    <RHFTextField name="taxInfo.postalCode" label="Código Postal" disabled={isSubmitting || !isTaxInfoEnabled} />
+                    <RHFTextField name="postalCode" label="Código Postal" disabled={isSubmitting || !isTaxInfoEnabled} />
                   </Grid>
 
                   <Grid xs={12} md={6} lg={8}>
-                    <RHFTextField name="taxInfo.billingEmail" label="Correo de facturación" disabled={isSubmitting || !isTaxInfoEnabled} />
+                    <RHFTextField name="billingEmail" label="Correo de facturación" disabled={isSubmitting || !isTaxInfoEnabled} />
                   </Grid>
 
                   <Grid xs={12} md={6} lg={6}>
-                    <RHFSelect name="taxInfo.paymentMethod" label="Método de Pago" disabled={isSubmitting || !isTaxInfoEnabled}>
+                    <RHFSelect name="paymentMethod" label="Método de Pago" disabled={isSubmitting || !isTaxInfoEnabled}>
                       <MenuItem value={PaymentMethodSchema.enum.PUE}>
                         PUE - Pago en una sola exhibición
                       </MenuItem>
@@ -204,7 +240,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                   </Grid>
 
                   <Grid xs={12} md={6} lg={6}>
-                    <RHFSelect name="taxInfo.paymentForm" label="Forma de Pago" disabled={isSubmitting || !isTaxInfoEnabled}>
+                    <RHFSelect name="paymentForm" label="Forma de Pago" disabled={isSubmitting || !isTaxInfoEnabled}>
                       {PAYMENT_FORM_OPTIONS.map((option) => (
                         <MenuItem key={option.key} value={option.key}>
                           {option.key} - {option.label}
@@ -214,13 +250,140 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                   </Grid>
 
                   <Grid xs={12} md={3} lg={12}>
-                    <RHFTextField name="taxInfo.address" label="Domicilio" disabled={isSubmitting || !isTaxInfoEnabled} />
+                    <RHFTextField name="address" label="Domicilio" disabled={isSubmitting || !isTaxInfoEnabled} />
                   </Grid>
                 </Grid>
               </Card>
             </Grid>
           </Fade>
         )}
+
+        {/** DIAGNÓSTICOS */}
+        <Grid xs={12} md={12} lg={12}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h6">
+              Formulario de Diagnóstico
+            </Typography>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Grid container spacing={2}>
+              <Grid xs={8} md={4} lg={6}>
+                <DatePicker
+                  control={control}
+                  onSubmitting={isSubmitting}
+                />
+              </Grid>
+
+              <Grid xs={4} md={2} lg={6}>
+                <RHFTextField
+                  name="addition"
+                  label="Adición"
+                  disabled={isSubmitting}
+                  placeholder="ej. +2.00"
+                />
+              </Grid>
+
+              <Grid xs={12} md={12} lg={12}>
+                <RHFTextField
+                  name="notes"
+                  label="Notas"
+                  disabled={isSubmitting}
+                />
+              </Grid>
+
+              {/* Sección Ojo Izquierdo */}
+              <Grid xs={12}>
+                <Typography variant="subtitle1">
+                  Ojo Izquierdo (OI)
+                </Typography>
+              </Grid>
+
+              <Grid xs={4} md={4} lg={4}>
+                <RHFTextField
+                  name="leftSphere"
+                  label="Esfera"
+                  disabled={isSubmitting}
+                  placeholder="ej. -1.25"
+                />
+              </Grid>
+
+              <Grid xs={4} md={4} lg={4}>
+                <RHFTextField
+                  name="leftCylinder"
+                  label="Cilindro"
+                  disabled={isSubmitting}
+                  placeholder="ej. -0.50"
+                />
+              </Grid>
+
+              <Grid xs={4} md={4} lg={4}>
+                <RHFTextField
+                  name="leftAxis"
+                  label="Eje"
+                  disabled={isSubmitting}
+                  placeholder="1-180"
+                />
+              </Grid>
+
+              {/* Sección Ojo Derecho */}
+              <Grid xs={12}>
+                <Typography variant="subtitle1">
+                  Ojo Derecho (OD)
+                </Typography>
+              </Grid>
+
+              <Grid xs={4} md={4} lg={4}>
+                <RHFTextField
+                  name="rightSphere"
+                  label="Esfera"
+                  disabled={isSubmitting}
+                  placeholder="ej. -1.25"
+                />
+              </Grid>
+
+              <Grid xs={4} md={4} lg={4}>
+                <RHFTextField
+                  name="rightCylinder"
+                  label="Cilindro"
+                  disabled={isSubmitting}
+                  placeholder="ej. -0.50"
+                />
+              </Grid>
+
+              <Grid xs={4} md={4} lg={4}>
+                <RHFTextField
+                  name="rightAxis"
+                  label="Eje"
+                  disabled={isSubmitting}
+                  placeholder="1-180"
+                />
+              </Grid>
+
+              <Grid xs={12} md={12} lg={12}>
+                <Divider sx={{ mt: 1, mb: 2.5 }} />
+
+                <LoadingButton
+                  fullWidth
+                  onClick={addDiagnoseItem}
+                  variant={editIndex !== null ? "contained" : "outlined"}
+                  disabled={isSubmitting}
+                >
+                  {editIndex !== null ? "Actualizar Diagnóstico" : "Agregar Diagnóstico"}
+                </LoadingButton>
+              </Grid>
+
+              {/* Tabla de diagnósticos */}
+              <Grid xs={12} md={12} lg={12}>
+                <DiagnosisTable
+                  diagnoses={formattedFields}
+                  onRemove={removeDiagnoseItem}
+                  onEdit={editDiagnoseItem}
+                />
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
       </Grid>
     </FormProvider>
   );

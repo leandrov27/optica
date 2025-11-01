@@ -25,10 +25,6 @@ export const API_ENDPOINTS = {
       show: (id: number) => `${ROOTS_API.admin}/client/${id}/show`,
       search: (query: string) => `${ROOTS_API.admin}/client/search?q=${encodeURIComponent(query)}`,
     },
-    diagnosis: {
-      search: (clientId: number) => `${ROOTS_API.admin}/diagnosis/search?id=${encodeURIComponent(clientId)}`,
-      upsert: `${ROOTS_API.admin}/diagnosis/upsert`
-    },
     note: {
       create: `${ROOTS_API.admin}/note/create`,
       update: (id: number) => `${ROOTS_API.admin}/note/${id}/update`,
@@ -41,6 +37,7 @@ export const API_ENDPOINTS = {
       create: `${ROOTS_API.admin}/product/create`,
       update: (id: number) => `${ROOTS_API.admin}/product/${id}/update`,
       delete: (id: number) => `${ROOTS_API.admin}/product/${id}/delete`,
+      search_category: (query: string) => `${ROOTS_API.admin}/product/search-category?q=${encodeURIComponent(query)}`,
     },
     category: {
       create: `${ROOTS_API.admin}/category/create`,

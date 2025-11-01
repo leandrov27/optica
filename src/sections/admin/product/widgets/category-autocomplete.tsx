@@ -1,7 +1,7 @@
 'use client';
 
 // react
-import { useState, useEffect, useMemo, ReactNode } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -13,13 +13,13 @@ import ax, { API_ENDPOINTS } from 'src/libs/fetcher';
 // pkgs
 import { debounce } from 'lodash';
 // schemas
-import { type IClientRaw } from 'src/core/schemas';
+import { ICategoryData } from 'src/core/schemas';
 
 // ----------------------------------------------------------------------
 
-type IClientAutocomplete = IClientRaw;
+type ICategoryAutocomplete = ICategoryData;
 
-interface ClientAutocompleteProps {
+interface CategoryAutocompleteProps {
     helperText?: string;
     error: boolean;
     onSubmitting: boolean;
@@ -28,9 +28,9 @@ interface ClientAutocompleteProps {
 
 // ----------------------------------------------------------------------
 
-export default function ClientAutocomplete({ helperText, error, onSubmitting, onHandleChange }: ClientAutocompleteProps) {
+export default function CategoryAutocomplete({ helperText, error, onSubmitting, onHandleChange }: CategoryAutocompleteProps) {
     const [inputValue, setInputValue] = useState<string>('');
-    const [options, setOptions] = useState<IClientAutocomplete[]>([]);
+    const [options, setOptions] = useState<ICategoryAutocomplete[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
     const debouncedSearch = useMemo(() => debounce(async (query: string) => {
@@ -40,12 +40,12 @@ export default function ClientAutocomplete({ helperText, error, onSubmitting, on
         }
 
         try {
-            const resp = await ax.get<{ clients: IClientAutocomplete[] }>(
-                API_ENDPOINTS.admin.client.search(query)
+            const resp = await ax.get<{ categories: ICategoryAutocomplete[] }>(
+                API_ENDPOINTS.admin.product.search_category(query)
             );
-            setOptions(resp.data.clients);
+            setOptions(resp.data.categories);
         } catch (err) {
-            console.error('Error fetching clients:', err);
+            console.error('Error fetching categories:', err);
             setOptions([]);
         }
     }, 300), []);
@@ -64,7 +64,7 @@ export default function ClientAutocomplete({ helperText, error, onSubmitting, on
             disabled={onSubmitting}
             options={options}
             getOptionLabel={(option) =>
-                `${option.displayName} (${option.phone})`
+                `${option.icon ? option.icon : null} ${option.name}`
             }
             loading={loading}
             loadingText="Cargando resultados..."
@@ -72,7 +72,7 @@ export default function ClientAutocomplete({ helperText, error, onSubmitting, on
                 loading
                     ? 'Buscando...'
                     : inputValue.length === 0
-                        ? 'Buscar cliente por nombre, rfc, email o teléfono...'
+                        ? 'Buscar categoría por nombre...'
                         : 'No se encontraron coincidencias.'
             }
             onChange={(event, value) => {
@@ -102,10 +102,7 @@ export default function ClientAutocomplete({ helperText, error, onSubmitting, on
                         }}
                     >
                         <Typography variant="subtitle1" fontWeight={600}>
-                            {option.displayName}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            📄 {option.type === 'INDIVIDUAL' ? 'Física' : 'Moral'} · 📞 {option.phone}
+                            {option.icon ?? null} {option.name}
                         </Typography>
                     </Box>
                 );
@@ -113,7 +110,7 @@ export default function ClientAutocomplete({ helperText, error, onSubmitting, on
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    placeholder="Buscar cliente..."
+                    placeholder="Buscar categoría..."
                     helperText={helperText}
                     error={!!error}
                     disabled={onSubmitting}

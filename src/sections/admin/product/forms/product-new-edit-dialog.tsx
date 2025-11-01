@@ -28,12 +28,12 @@ import useCategoryDialogStore from '../../category/stores/useCategoryDialogStore
 import CategoryNewEditDialog from '../../category/forms/category-new-edit-dialog';
 //
 import useNewEditProduct from '../hooks/useNewEditProduct';
+import CategoryAutocomplete from '../widgets/category-autocomplete';
 
 // ----------------------------------------------------------------------
 
 interface ProductNewEditDialogProps {
     product?: IProductData;
-    categories: ICategoryData[];
     //
     openDialog: boolean;
     onCloseDialog: VoidFunction;
@@ -41,7 +41,7 @@ interface ProductNewEditDialogProps {
 
 // ----------------------------------------------------------------------
 
-export default function ProductNewEditDialog({ product, categories, openDialog = false, onCloseDialog }: ProductNewEditDialogProps) {
+export default function ProductNewEditDialog({ product, openDialog = false, onCloseDialog }: ProductNewEditDialogProps) {
     const theme = useTheme();
 
     const categoryDialogStatus = useCategoryDialogStore((state) => state.open);
@@ -99,26 +99,11 @@ export default function ProductNewEditDialog({ product, categories, openDialog =
                                     name="categoryId"
                                     control={control}
                                     render={({ field, fieldState }) => (
-                                        <Autocomplete
-                                            options={categories}
-                                            getOptionLabel={(category) => `${category.icon ?? ''} ${category.name}` || ""}
-                                            onChange={(_, selectedOption) => {
-                                                field.onChange(selectedOption?.id ?? 0);
-                                            }}
-                                            value={categories.find((cat) => cat.id === field.value) || null}
-                                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    label="Categoría del Servicio"
-                                                    placeholder="Seleccione una categoría..."
-                                                    helperText={fieldState.error?.message}
-                                                    error={!!fieldState.error}
-                                                />
-                                            )}
-                                            noOptionsText="Sin resultados"
-                                            disabled={isSubmitting}
-                                            sx={{ width: 1 }}
+                                        <CategoryAutocomplete
+                                            onSubmitting={isSubmitting}
+                                            helperText={fieldState.error?.message}
+                                            error={fieldState.invalid}
+                                            onHandleChange={field.onChange}
                                         />
                                     )}
                                 />

@@ -32,14 +32,6 @@ interface ProductPaginated {
 
 // ----------------------------------------------------------------------
 
-const getCategories = async (): Promise<ICategoryData[]> => {
-    const categories = await db.category.findMany();
-
-    return categories || [];
-}
-
-// ----------------------------------------------------------------------
-
 const getProductsPaginated = async (
     itemsPerPage: number,
     search: string,
@@ -98,9 +90,6 @@ export default async function CategoryListPage({ searchParams }: ProductListPage
         const search = searchParams?.search || '';
         const page = Number(searchParams?.page) || 1;
 
-        // Obtener categorías
-        const categories = await getCategories();
-
         // Obtener datos paginados
         const { products, totalCount } = await getProductsPaginated(
             itemsPerPage,
@@ -116,7 +105,6 @@ export default async function CategoryListPage({ searchParams }: ProductListPage
         return (
             <ProductListView
                 products={products}
-                categories={categories}
                 //
                 searchTerm={search}
                 //

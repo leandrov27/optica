@@ -9,12 +9,11 @@ import {
     type Category,
     type User,
     type Setting,
+    Prisma,
 } from 'src/generated/prisma';
 //
 import {
-    CreateUpdateClientWithTaxInfoSchema,
-    //
-    CreateUpdateDiagnosisSchema,
+    CreateUpdateClientSchema,
     //
     CreateNoteSchema,
     UpdateNoteSchema,
@@ -31,6 +30,7 @@ import {
     UpdateUserProfileSchema,
     //
     UpdateSettingsSchema,
+    DiagnosisHistory,
 } from 'src/core/schemas';
 
 // ----------------------------------------------------------------------
@@ -38,17 +38,47 @@ import {
 //* ----------------------------------------------------------------------
 //* CLIENT ---------------------------------------------------------------
 //* ----------------------------------------------------------------------
-export type ICreateUpdateClientWithTaxInfoPayload = z.infer<typeof CreateUpdateClientWithTaxInfoSchema>;
+export type ICreateUpdateClientPayload = z.infer<typeof CreateUpdateClientSchema>;
 export type IClientRaw = Pick<Client, 'id' | 'displayName' | 'phone' | 'type'>;
-export type IClientData = Omit<Client, 'createdAt'> & {
-    taxInfo: Omit<TaxInfo, 'id' | 'clientId'> | null;
+export type IClientData = {
+    type: 'INDIVIDUAL' | 'BUSINESS';
+    id: number;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    birthDate: string | null;
+    email: string | null;
+    phone: string;
+    observations: string | null;
+    diagnoses: {
+        date: string;
+        leftAxis: string | null;
+        leftSphere: string | null;
+        leftCylinder: string | null;
+        rightAxis: string | null;
+        rightSphere: string | null;
+        rightCylinder: string | null;
+        addition: string | null;
+        notes: string | null;
+    }[];
+    taxInfo: {
+        rfc: string | null;
+        businessName: string;
+        billingEmail: string | null;
+        postalCode: string | null;
+        cfdiUse: string | null;
+        taxRegime: string | null;
+        paymentMethod: string | null;
+        paymentForm: string | null;
+        address: string | null;
+    } | null;
 };
 
 //* ----------------------------------------------------------------------
 //* DIAGNOSIS ------------------------------------------------------------
 //* ----------------------------------------------------------------------
-export type ICreateUpdateDiagnosisPayload = z.infer<typeof CreateUpdateDiagnosisSchema>;
 export type IDiagnosisData = Diagnosis;
+export type IDiagnosisItem = z.infer<typeof DiagnosisHistory>;
 
 //* ----------------------------------------------------------------------
 //* NOTE -----------------------------------------------------------------

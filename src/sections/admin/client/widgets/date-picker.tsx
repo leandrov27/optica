@@ -1,9 +1,7 @@
 // @mui
 import { MobileDatePicker } from "@mui/x-date-pickers";
 // components
-import { type Control, Controller } from "react-hook-form";
-// schemas
-import { type ICreateUpdateDiagnosisPayload } from "src/core/schemas";
+import { Controller } from "react-hook-form";
 // libs
 import { dayjs } from "src/libs/dayjs";
 

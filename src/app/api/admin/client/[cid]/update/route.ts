@@ -5,7 +5,7 @@ import db from "src/libs/prisma";
 // utils
 import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
-import { CreateUpdateClientWithTaxInfoSchema, type ICreateUpdateClientWithTaxInfoPayload } from "src/core/schemas";
+import { CreateUpdateClientSchema, type ICreateUpdateClientPayload } from "src/core/schemas";
 
 // ----------------------------------------------------------------------
 
@@ -21,8 +21,8 @@ export async function PUT(request: Request, { params }: { params: { cid: string 
 
   try {
     const cid = Number(params.cid);
-    const data: ICreateUpdateClientWithTaxInfoPayload = await request.json();
-    const validationSchema = CreateUpdateClientWithTaxInfoSchema.safeParse(data);
+    const data: ICreateUpdateClientPayload = await request.json();
+    const validationSchema = CreateUpdateClientSchema.safeParse(data);
 
     if (!validationSchema.success) {
       const errorMessages = validationSchema.error.issues
@@ -37,10 +37,12 @@ export async function PUT(request: Request, { params }: { params: { cid: string 
 
     const parsed = validationSchema.data;
 
-    // Verificar si el cliente existe
     const existingClient = await db.client.findUnique({
       where: { id: cid },
-      include: { taxInfo: true }
+      include: {
+        taxInfo: true,
+        diagnoses: true
+      }
     });
 
     if (!existingClient) {
@@ -50,7 +52,6 @@ export async function PUT(request: Request, { params }: { params: { cid: string 
       );
     }
 
-    // Preparar los datos del cliente
     const clientData = {
       firstName: parsed.firstName,
       lastName: parsed.lastName,
@@ -62,65 +63,84 @@ export async function PUT(request: Request, { params }: { params: { cid: string 
       observations: parsed.observations,
     };
 
-    // Manejar la información fiscal condicionalmente
     let taxInfoData = {};
 
     if (parsed.enableTaxInfo) {
-      const businessName = parsed.taxInfo.businessName || `${parsed.firstName} ${parsed.lastName}`;
-
+      const businessName = parsed.businessName || `${parsed.firstName} ${parsed.lastName}`;
       if (existingClient.taxInfo) {
-        // Si ya existe taxInfo, actualizar
         taxInfoData = {
           taxInfo: {
             update: {
-              rfc: parsed.taxInfo.rfc || null,
-              businessName: businessName,
-              postalCode: parsed.taxInfo.postalCode || null,
-              taxRegime: parsed.taxInfo.taxRegime || null,
-              cfdiUse: parsed.taxInfo.cfdiUse || null,
-              paymentMethod: parsed.taxInfo.paymentMethod || null,
-              paymentForm: parsed.taxInfo.paymentForm || null,
-              billingEmail: parsed.taxInfo.billingEmail || null,
-              address: parsed.taxInfo.address || null,
-            }
-          }
+              rfc: parsed.rfc || null,
+              businessName,
+              postalCode: parsed.postalCode || null,
+              taxRegime: parsed.taxRegime || null,
+              cfdiUse: parsed.cfdiUse || null,
+              paymentMethod: parsed.paymentMethod || null,
+              paymentForm: parsed.paymentForm || null,
+              billingEmail: parsed.billingEmail || null,
+              address: parsed.address || null,
+            },
+          },
         };
       } else {
-        // Si no existe taxInfo, crear
         taxInfoData = {
           taxInfo: {
             create: {
-              rfc: parsed.taxInfo.rfc || null,
-              businessName: businessName,
-              postalCode: parsed.taxInfo.postalCode || null,
-              taxRegime: parsed.taxInfo.taxRegime || null,
-              cfdiUse: parsed.taxInfo.cfdiUse || null,
-              paymentMethod: parsed.taxInfo.paymentMethod || null,
-              paymentForm: parsed.taxInfo.paymentForm || null,
-              billingEmail: parsed.taxInfo.billingEmail || null,
-              address: parsed.taxInfo.address || null,
-            }
-          }
+              rfc: parsed.rfc || null,
+              businessName,
+              postalCode: parsed.postalCode || null,
+              taxRegime: parsed.taxRegime || null,
+              cfdiUse: parsed.cfdiUse || null,
+              paymentMethod: parsed.paymentMethod || null,
+              paymentForm: parsed.paymentForm || null,
+              billingEmail: parsed.billingEmail || null,
+              address: parsed.address || null,
+            },
+          },
         };
       }
     }
 
-    await db.client.update({
-      where: { id: cid },
-      data: {
-        ...clientData,
-        ...taxInfoData
+    await db.$transaction(async (tx) => {
+      await tx.client.update({
+        where: { id: cid },
+        data: {
+          ...clientData,
+          ...taxInfoData,
+        },
+      });
+
+      await tx.diagnosis.deleteMany({
+        where: { clientId: cid },
+      });
+
+      if (parsed.diagnoses?.length) {
+        await tx.diagnosis.createMany({
+          data: parsed.diagnoses.map((diag) => ({
+            clientId: cid,
+            date: diag.date || '',
+            leftAxis: diag.leftAxis || null,
+            leftSphere: diag.leftSphere || null,
+            leftCylinder: diag.leftCylinder || null,
+            rightAxis: diag.rightAxis || null,
+            rightSphere: diag.rightSphere || null,
+            rightCylinder: diag.rightCylinder || null,
+            addition: diag.addition || null,
+            notes: diag.notes || null,
+          })),
+        });
       }
     });
-    
+
     return NextResponse.json(
-      { message: `Cliente #${cid} modificado correctamente` },
+      { message: `Cliente #${cid} actualizado correctamente` },
       { status: 201 }
     );
   } catch (error: any) {
     if (error.code === 'P2002') {
       return NextResponse.json(
-        { message: 'Teléfono o documento ya existe' },
+        { message: 'Teléfono, RFC o email ya existe' },
         { status: 409 }
       );
     }

@@ -5,178 +5,236 @@ import { dayjs } from 'src/libs/dayjs';
 import { isPhoneValid } from 'src/utils/phone-validation';
 import { capitalizeString } from 'src/utils/format-string';
 //
-import { TypeSchema } from './sub-schemas';
-import { CreateUpdateTaxInfoSchema } from './tax-info-schema';
+import {
+    CFDISchema,
+    PaymentFormSchema,
+    PaymentMethodSchema,
+    TaxRegimeSchema,
+    TypeSchema
+} from './sub-schemas';
+
+// ----------------------------------------------------------------------
+
+const rfcBaseRegex = /^([A-ZÑ&]{3,4})([0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01]))([A-Z\d]{2})([A\d])$/;
+
+export const DiagnosisHistory = z.object({
+    diagnosisId: z.number().int().optional(),
+    date: z.string().nullable(),
+    rightSphere: z.string().nullable(),
+    rightCylinder: z.string().nullable(),
+    rightAxis: z.string().nullable(),
+    leftSphere: z.string().nullable(),
+    leftCylinder: z.string().nullable(),
+    leftAxis: z.string().nullable(),
+    addition: z.string().nullable(),
+    notes: z.string().nullable(),
+}).readonly();
 
 // ----------------------------------------------------------------------
 
 const ClientSchema = z.object({
+    //* -----------
+    //* CLIENT INFO
+    //* -----------
     id: z
         .int()
         .positive(),
     firstName: z
         .string()
-        .min(3, {
-            error: ({ minimum }) => {
-                return `El nombre debe tener al menos ${minimum} caracteres`;
-            },
-        })
-        .max(100, {
-            error: ({ maximum }) => {
-                return `El nombre no debe exceder los ${maximum} caracteres`;
-            },
-        })
-        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, {
-            message: 'El nombre solo puede contener letras y espacios',
-        })
+        .min(3, { error: "El nombre debe tener al menos 3 caracteres" })
+        .max(100, { error: "El nombre no debe exceder los 100 caracteres" })
+        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, { error: 'El nombre solo puede contener letras y espacios' })
         .transform((value) => capitalizeString(value)),
     lastName: z
         .string()
-        .min(4, {
-            error: ({ minimum }) => {
-                return `El apellido debe tener al menos ${minimum} caracteres`;
-            },
-        })
-        .max(100, {
-            error: ({ maximum }) => {
-                return `El apellido no debe exceder los ${maximum} caracteres`;
-            },
-        })
-        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, {
-            message: 'El apellido solo puede contener letras y espacios',
-        })
+        .min(4, { error: "El apellido debe tener al menos 4 caracteres" })
+        .max(100, { error: "El apellido no debe exceder los 100 caracteres" })
+        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, { error: 'El apellido solo puede contener letras y espacios' })
         .transform((value) => capitalizeString(value)),
     displayName: z
         .string()
         .transform((value) => capitalizeString(value)),
     birthDate: z
-        .string().refine((val) => dayjs(val, 'YYYY-MM-DD', true).isValid(), {
-            message: 'Formato de fecha no válido (Se espera: YYYY-MM-DD)',
-        })
+        .string().refine((val) => dayjs(val, 'YYYY-MM-DD', true).isValid(), { error: 'Formato de fecha no válido (Se espera: YYYY-MM-DD)' })
         .or(z.literal(''))
         .transform((val) => (val === '' ? null : val))
         .nullable(),
     email: z
-        .email({ message: 'Formato de correo inválido' })
+        .email({ error: 'Formato de correo inválido' })
         .trim()
         .or(z.literal(''))
         .transform((val) => (val === '' ? null : val))
         .nullable(),
     phone: z
         .string()
-        .min(6, {
-            error: ({ minimum }) => {
-                return `El teléfono debe tener al menos ${minimum} caracteres`;
-            },
-        })
-        .refine((value: string) => isPhoneValid(value), {
-            message: 'Formato inválido para el país seleccionado',
-        })
+        .min(4, { error: "El teléfono debe tener al menos 6 caracteres" })
+        .refine((value: string) => isPhoneValid(value), { error: 'Formato inválido para el país seleccionado' })
         .trim(),
+    type: TypeSchema,
     observations: z
         .string()
         .toLowerCase()
         .trim()
         .nullable(),
-    type: TypeSchema,
+    //^ --------
+    //^ TAX INFO
+    //^ --------
+    rfc: z
+        .string()
+        .transform((value) => value.toUpperCase().trim())
+        .nullable(),
+    businessName: z
+        .string()
+        .max(200, { error: "La razón social no debe exceder los 200 caracteres" })
+        .transform((value) => capitalizeString(value))
+        .nullable(),
+    billingEmail: z
+        .email({ error: 'Formato de correo inválido' })
+        .trim()
+        .or(z.literal(''))
+        .transform((val) => (val === '' ? null : val))
+        .nullable(),
+    postalCode: z
+        .string()
+        .min(5, { error: "El código postal debe tener al menos 5 caracteres" })
+        .max(5, { error: "El código postal debe tener 5 caracteres" })
+        .trim()
+        .or(z.literal(''))
+        .transform((val) => (val === '' ? null : val))
+        .nullable(),
+    cfdiUse: CFDISchema
+        .nullable(),
+    taxRegime: TaxRegimeSchema
+        .nullable(),
+    paymentMethod: PaymentMethodSchema
+        .nullable(),
+    paymentForm: PaymentFormSchema
+        .nullable(),
+    address: z
+        .string()
+        .toLowerCase()
+        .trim()
+        .nullable(),
+    //~ --------------
+    //~ DIAGNOSIS INFO
+    //~ --------------
+    date: z
+        .string()
+        .or(z.literal(''))
+        .transform((val) => (val === '' ? null : val))
+        .nullable(),
+    leftAxis: z
+        .string()
+        .trim(),
+    leftSphere: z
+        .string()
+        .trim(),
+    leftCylinder: z
+        .string()
+        .trim(),
+    rightAxis: z
+        .string()
+        .trim(),
+    rightSphere: z
+        .string()
+        .trim(),
+    rightCylinder: z
+        .string()
+        .trim(),
+    addition: z
+        .string()
+        .trim(),
+    notes: z
+        .string()
+        .toLowerCase()
+        .trim(),
+    diagnoses: z
+        .array(DiagnosisHistory)
 });
 
 // ----------------------------------------------------------------------
 
-const CreateUpdateClientSchema = ClientSchema.omit({ id: true, displayName: true });
-
-// ----------------------------------------------------------------------
-
-/**
- * RFC mexicano (válido para personas físicas y morales)
- */
-const rfcBaseRegex = /^([A-ZÑ&]{3,4})([0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01]))([A-Z\d]{2})([A\d])$/;
-
-// ----------------------------------------------------------------------
-
-export const CreateUpdateClientWithTaxInfoSchema = CreateUpdateClientSchema.extend({
-    enableTaxInfo: z.boolean(),
-    taxInfo: CreateUpdateTaxInfoSchema,
+export const CreateUpdateClientSchema = ClientSchema.omit({ id: true, displayName: true }).extend({
+    enableTaxInfo: z.boolean().default(false)
 }).check((ctx) => {
     const { value, issues } = ctx;
-    const { enableTaxInfo, taxInfo, type } = value;
+    const {
+        //*
+        enableTaxInfo,
+        type,
+        //^
+        rfc,
+        businessName,
+        postalCode,
+        billingEmail,
+        address
+    } = value;
 
-    // Solo validar taxInfo si está habilitado
     if (!enableTaxInfo) {
         return;
     }
 
-    if (taxInfo.rfc) {
-        if (type === 'INDIVIDUAL' && taxInfo.rfc.length !== 13) {
+    if (rfc) {
+        if (type === 'INDIVIDUAL' && rfc.length !== 13) {
             issues.push({
-                code: "custom",
-                path: ['taxInfo.rfc'],
+                code: 'custom',
+                path: ['rfc'],
                 message: 'El RFC de una persona física debe tener exactamente 13 caracteres',
-                input: [taxInfo.rfc]
+                input: [rfc]
             });
         }
 
-        if (type === 'BUSINESS' && taxInfo.rfc.length !== 12) {
+        if (type === 'BUSINESS' && rfc.length !== 12) {
             issues.push({
-                code: "custom",
-                path: ['taxInfo.rfc'],
+                code: 'custom',
+                path: ['rfc'],
                 message: 'El RFC de una persona moral debe tener exactamente 12 caracteres',
-                input: [taxInfo.rfc]
+                input: [rfc]
             });
         }
 
-        if (!rfcBaseRegex.test(taxInfo.rfc)) {
+        if (!rfcBaseRegex.test(rfc)) {
             issues.push({
-                code: "custom",
-                path: ['taxInfo.rfc'],
-                message: 'El RFC no tiene un formato válido para el tipo seleccionado',
-                input: [taxInfo.rfc]
+                code: 'custom',
+                path: ['rfc'],
+                message: 'El RFC no tiene un formato válido para el tipo de cliente seleccionado',
+                input: [rfc]
             });
         }
     }
 
-    // Validar businessName solo si taxInfo está habilitado
-    if (!taxInfo.businessName) {
-        issues.push({
-            code: "custom",
-            path: ['taxInfo.businessName'],
-            message: 'La razón social es requerida cuando la información fiscal está habilitada',
-            input: [taxInfo.businessName]
-        });
-    }
+    issues.push({
+        code: 'custom',
+        path: ['rfc'],
+        message: 'El RFC es requerido cuando la información fiscal está habilitada',
+        input: [rfc]
+    });
 
-    if (!taxInfo.rfc) {
-        issues.push({
-            code: "custom",
-            path: ['taxInfo.rfc'],
-            message: 'El RFC es requerido cuando la información fiscal está habilitada',
-            input: [taxInfo.rfc]
-        });
-    }
-    if (!taxInfo.postalCode) {
-        issues.push({
-            code: "custom",
-            path: ['taxInfo.postalCode'],
-            message: 'El código postal es requerido cuando la información fiscal está habilitada',
-            input: [taxInfo.postalCode]
-        });
-    }
+    issues.push({
+        code: 'custom',
+        path: ['businessName'],
+        message: 'La razón social es requerida cuando la información fiscal está habilitada',
+        input: [businessName]
+    });
 
-    if (!taxInfo.billingEmail) {
-        issues.push({
-            code: "custom",
-            path: ['taxInfo.billingEmail'],
-            message: 'El correo de facturación es requerido cuando la información fiscal está habilitada',
-            input: [taxInfo.billingEmail]
-        });
-    }
+    issues.push({
+        code: 'custom',
+        path: ['postalCode'],
+        message: 'El código postal es requerido cuando la información fiscal está habilitada',
+        input: [postalCode]
+    });
 
-    if (!taxInfo.address) {
-        issues.push({
-            code: "custom",
-            path: ['taxInfo.address'],
-            message: 'El domicilio es requerido cuando la información fiscal está habilitada',
-            input: [taxInfo.address]
-        });
-    }
+    issues.push({
+        code: 'custom',
+        path: ['billingEmail'],
+        message: 'El correo de facturación es requerido cuando la información fiscal está habilitada',
+        input: [billingEmail]
+    });
+
+    issues.push({
+        code: 'custom',
+        path: ['address'],
+        message: 'El domicilio es requerido cuando la información fiscal está habilitada',
+        input: [address]
+    });
 });
