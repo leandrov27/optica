@@ -48,7 +48,7 @@ export function useNavData() {
             icon: ICONS.client,
           },
           {
-            title: 'Notas',
+            title: 'Notas de Venta',
             path: paths.admin.note.list,
             icon: ICONS.note,
           },

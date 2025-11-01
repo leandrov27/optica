@@ -216,7 +216,7 @@ export default function useCreateClient() {
             reset();
             router.refresh();
             if (pathname === paths.admin.client.create) {
-                router.push(paths.admin.client.list);
+                router.replace(paths.admin.client.list);
             }
         } catch (error: any) {
             toast.error(error.message);

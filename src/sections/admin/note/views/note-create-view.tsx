@@ -18,17 +18,17 @@ export default function NoteCreateView() {
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
-                heading="Registar Nueva Nota"
+                heading="Registar Nueva Nota de Venta"
                 links={[
                     {
                         name: 'Panel de Control',
                         href: paths.admin.root,
                     },
                     {
-                        name: 'Lista de Notas',
+                        name: 'Lista de Notas de Venta',
                         href: paths.admin.note.list,
                     },
-                    { name: 'Nueva Nota' },
+                    { name: 'Nueva Nota de Venta' },
                 ]}
                 sx={{
                     mb: { xs: 3, md: 5 },

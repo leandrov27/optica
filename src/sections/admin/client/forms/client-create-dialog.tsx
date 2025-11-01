@@ -2,7 +2,13 @@
 
 // @mui
 import Dialog from '@mui/material/Dialog';
-import { Container, DialogTitle, Divider, useTheme } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useTheme } from '@mui/material';
+// components
+import Iconify from 'src/components/iconify';
+//
 import ClientCreateForm from './client-create-form';
 
 // ----------------------------------------------------------------------
@@ -37,16 +43,28 @@ export default function ClientCreateDialog({ openDialog, onCloseDialog }: Client
                     },
                     msOverflowStyle: 'none',
                     scrollbarWidth: 'none',
-                    p: 2
+                    px: 2
                 }
             }}
         >
-            <DialogTitle textAlign="center" sx={{ py: 1.5 }}>Registrar Cliente</DialogTitle>
+            <DialogTitle textAlign="left" sx={{ mt: 0.1 }}>Registrar Cliente</DialogTitle>
+
+            <IconButton
+                aria-label="close"
+                onClick={onCloseDialog}
+                sx={(theme) => ({
+                    position: 'absolute',
+                    right: 8,
+                    top: 15,
+                    color: theme.palette.grey[500],
+                })}
+            >
+                <Iconify icon="ic:round-close" width={26} />
+            </IconButton>
 
             <Divider sx={{ mb: 2 }} />
 
             <ClientCreateForm onSuccess={handleSuccess} />
         </Dialog>
-
     )
 }

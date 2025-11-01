@@ -26,17 +26,17 @@ export default function NoteEditView({ note }: NoteEditViewProps) {
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
-                heading="Modificar Nota"
+                heading="Modificar Nota de Venta"
                 links={[
                     {
                         name: 'Panel de Control',
                         href: paths.admin.root,
                     },
                     {
-                        name: 'Lista de Notas',
+                        name: 'Lista de Notas de Venta',
                         href: paths.admin.note.list,
                     },
-                    { name: `Modificar Nota #${note.id}` },
+                    { name: `Modificar Nota de Venta #${note.id}` },
                 ]}
                 sx={{
                     mb: { xs: 3, md: 5 },

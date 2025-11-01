@@ -49,13 +49,13 @@ export default function NoteListView({
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
-                heading="Lista de Notas"
+                heading="Lista de Notas de Venta"
                 links={[
                     {
                         name: 'Panel de Control',
                         href: paths.admin.root,
                     },
-                    { name: 'Notas' },
+                    { name: 'Notas de Venta' },
                 ]}
                 action={
                     <Button sx={{ minWidth: 20 }} variant="contained" LinkComponent={RouterLink} href={paths.admin.note.create}>

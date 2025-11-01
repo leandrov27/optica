@@ -7,11 +7,10 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
+import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DialogTitle from '@mui/material/DialogTitle';
-import Autocomplete from '@mui/material/Autocomplete';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { useTheme } from '@mui/material';
@@ -20,7 +19,7 @@ import Iconify from 'src/components/iconify';
 import { Controller } from 'react-hook-form';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 // schemas
-import { type ICategoryData, type IProductData } from 'src/core/schemas';
+import { type IProductData } from 'src/core/schemas';
 // utils
 import { CONFIRM_ICON } from 'src/utils/constants';
 // [category]
@@ -87,7 +86,20 @@ export default function ProductNewEditDialog({ product, openDialog = false, onCl
             }}
         >
             <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <DialogTitle textAlign="center" sx={{ py: 1.5 }}>{isEdit ? 'Modificar' : 'Registrar'} Producto</DialogTitle>
+                <DialogTitle textAlign="left" sx={{ py: 1.5 }}>{isEdit ? 'Modificar' : 'Registrar'} Producto</DialogTitle>
+
+                <IconButton
+                    aria-label="close"
+                    onClick={handleCancelAndClose}
+                    sx={(theme) => ({
+                        position: 'absolute',
+                        right: 8,
+                        top: 5,
+                        color: theme.palette.grey[500],
+                    })}
+                >
+                    <Iconify icon="ic:round-close" width={26} />
+                </IconButton>
 
                 <Divider />
 

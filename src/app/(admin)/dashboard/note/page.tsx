@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata = {
-    title: 'Lista de Notas',
+    title: 'Lista de Notas de Venta',
 };
 
 // ----------------------------------------------------------------------
