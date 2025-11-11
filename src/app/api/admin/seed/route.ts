@@ -34,7 +34,7 @@ export async function POST(request: Request) {
             }
         });
 
-        console.log("✅ Ajustes iniciales creados o ya existían.");
+        console.log("✅ Ajustes iniciales creados o ya existían");
 
         // --- Hash de la contraseña ---
         const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, 10);
