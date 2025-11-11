@@ -18,7 +18,7 @@ export default function GuestGuard({ children }: GuestGuardProps) {
 
   const check = useCallback(() => {
     if (authenticated) {
-      router.replace(paths.admin.client.list);
+      router.replace(paths.admin.note.list);
     }
   }, [authenticated, router]);
 
