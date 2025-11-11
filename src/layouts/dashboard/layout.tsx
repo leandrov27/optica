@@ -25,7 +25,7 @@ export default function DashboardLayout({ children }: Props) {
 
   useEffect(() => {
     refreshSettings();
-  }, []);
+  }, [refreshSettings]);
 
   const settings = useSettingsContext();
 
