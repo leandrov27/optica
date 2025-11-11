@@ -49,7 +49,6 @@ export async function POST(request: Request) {
             select: {
                 id: true,
                 phone: true,
-                document: true,
                 firstName: true,
                 lastName: true,
                 role: true,

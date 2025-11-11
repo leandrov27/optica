@@ -35,7 +35,6 @@ export default function useEditUser({ user }: useEditUserProps) {
             firstName: user?.firstName || '',
             lastName: user?.lastName || '',
             phone: user?.phone || '',
-            document: user?.document || '',
             role: 'ADMIN'
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps

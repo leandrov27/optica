@@ -50,14 +50,6 @@ const UserSchema = z.object({
             message: 'Formato inválido para el país seleccionado',
         })
         .trim(),
-    document: z
-        .string()
-        .min(7, {
-            error: ({ minimum }) => {
-                return `El documento debe tener al menos ${minimum} caracteres`;
-            },
-        })
-        .trim(),
     password: z
         .string()
         .min(6, {

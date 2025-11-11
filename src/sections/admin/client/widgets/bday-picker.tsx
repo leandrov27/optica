@@ -1,5 +1,5 @@
 // @mui
-import { MobileDatePicker } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 // components
 import { Controller } from "react-hook-form";
 // libs
@@ -20,9 +20,8 @@ export default function BirthtdatePicker({ control, onSubmitting }: BirthtdatePi
             name="birthDate"
             control={control}
             render={({ field }) => (
-                <MobileDatePicker
+                <DatePicker
                     label="Fecha de Nacimiento"
-                    format={field.value ? "dddd DD [de] MMMM [de] YYYY" : ""}
                     maxDate={dayjs().startOf("day")}
                     value={field.value ? dayjs(field.value) : null}
                     onChange={(newValue) => {

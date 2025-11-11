@@ -22,6 +22,7 @@ import { type ISettingsData } from 'src/core/schemas';
 //
 import useEditSettings from '../hooks/useEditSettings';
 import CountryAutocomplete from '../widgets/country-autocomplete';
+import { useAuthContext } from 'src/core/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,8 @@ interface SettingsEditFormProps {
 
 export default function SettingsEditForm({ settings }: SettingsEditFormProps) {
     const confirm = useBoolean();
+
+    const { user, authenticated } = useAuthContext();
 
     const {
         //* hookform
@@ -94,34 +97,36 @@ export default function SettingsEditForm({ settings }: SettingsEditFormProps) {
                                     />
                                 </Stack>
 
-                                <Stack spacing={1} flexDirection="column" justifyContent="center" alignItems="center">
-                                    <Typography variant='h6'>
-                                        Logo de la Empresa
-                                    </Typography>
-                                    <RHFUploadAvatar
-                                        name="companyLogoUrl"
-                                        maxSize={3145728}
-                                        onDrop={handleDropCompanyLogo}
-                                        onReset={handleUndropCompanyLogo}
-                                        isSubmitting={isSubmitting}
-                                        disabled={isSubmitting}
-                                        helperText={
-                                            <Typography
-                                                variant="caption"
-                                                sx={{
-                                                    mt: 1,
-                                                    mx: 'auto',
-                                                    display: 'block',
-                                                    textAlign: 'center',
-                                                    color: 'text.disabled',
-                                                }}
-                                            >
-                                                Tipos permitidos: <strong>*.jpeg, *.jpg, *.png, *.gif</strong>
-                                                <br /> Tam. máximo: <strong>{fData(3000000)}</strong>
-                                            </Typography>
-                                        }
-                                    />
-                                </Stack>
+                                {user?.id === 1 && authenticated && (
+                                    <Stack spacing={1} flexDirection="column" justifyContent="center" alignItems="center">
+                                        <Typography variant='h6'>
+                                            Logo de la Empresa
+                                        </Typography>
+                                        <RHFUploadAvatar
+                                            name="companyLogoUrl"
+                                            maxSize={3145728}
+                                            onDrop={handleDropCompanyLogo}
+                                            onReset={handleUndropCompanyLogo}
+                                            isSubmitting={isSubmitting}
+                                            disabled={isSubmitting}
+                                            helperText={
+                                                <Typography
+                                                    variant="caption"
+                                                    sx={{
+                                                        mt: 1,
+                                                        mx: 'auto',
+                                                        display: 'block',
+                                                        textAlign: 'center',
+                                                        color: 'text.disabled',
+                                                    }}
+                                                >
+                                                    Tipos permitidos: <strong>*.jpeg, *.jpg, *.png, *.gif</strong>
+                                                    <br /> Tam. máximo: <strong>{fData(3000000)}</strong>
+                                                </Typography>
+                                            }
+                                        />
+                                    </Stack>
+                                )}
                             </Stack>
                         </Box>
 

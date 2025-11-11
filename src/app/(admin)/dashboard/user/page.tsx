@@ -46,7 +46,6 @@ const getUsersPaginated = async (
             ...terms.map((term) => ({
                 OR: [
                     { displayName: { contains: term } },
-                    { document: { contains: term } },
                     { phone: { contains: term } },
                 ],
             })),

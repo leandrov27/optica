@@ -14,4 +14,4 @@ export const SOFT_NAME = process.env.NEXT_PUBLIC_SOFT_NAME || 'Óptica Visión';
 
 // ----------------------------------------------------------------------
 
-export const ADMIN_PATH_AFTER_LOGIN = paths.admin.client.list;
+export const ADMIN_PATH_AFTER_LOGIN = paths.admin.note.list;

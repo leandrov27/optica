@@ -30,6 +30,7 @@ export default function DiagnosisTableRow({ row, onRemove, onEdit }: DiagnosisTa
         leftSphere,
         leftCylinder,
         leftAxis,
+        di,
         //
         rightSphere,
         rightCylinder,
@@ -62,6 +63,12 @@ export default function DiagnosisTableRow({ row, onRemove, onEdit }: DiagnosisTa
             <TableCell align="center">
                 <Label color="success">
                     {leftAxis || '-'}
+                </Label>
+            </TableCell>
+
+            <TableCell align="center">
+                <Label color="success">
+                    {di || '-'}
                 </Label>
             </TableCell>
 

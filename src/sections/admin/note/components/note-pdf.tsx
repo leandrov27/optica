@@ -114,6 +114,7 @@ export default function NotePDF({
     subtotal,
     discount,
     total,
+    notes,
   } = note;
 
   return (
@@ -311,6 +312,15 @@ export default function NotePDF({
             </View>
           </View>
         </View>
+
+        {notes && (
+          <>
+            <Text style={[styles.subtitle2, styles.mb4, { marginTop: 8 }]}>
+              Notas
+            </Text>
+            <Text style={styles.body2}>{notes}</Text>
+          </>
+        )}
 
         {/* Footer */}
         <View style={[styles.gridContainer, styles.footer]} fixed>

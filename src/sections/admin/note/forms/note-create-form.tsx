@@ -4,20 +4,28 @@
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Divider from "@mui/material/Divider";
+import MenuItem from "@mui/material/MenuItem";
+import Grid from "@mui/material/Unstable_Grid2";
+import Typography from "@mui/material/Typography";
+import LoadingButton from "@mui/lab/LoadingButton";
 // hooks
 import { useBoolean } from "src/hooks/use-boolean";
+// routes
+import { RouterLink } from "src/routes/components";
+import { paths } from "src/routes/paths";
 // components
 import FormProvider from 'src/components/hook-form/form-provider';
-import { RHFSwitch } from 'src/components/hook-form';
+import { RHFSelect, RHFSwitch, RHFTextField } from 'src/components/hook-form';
 import { Controller } from "react-hook-form";
 import Iconify from "src/components/iconify";
 import Label from "src/components/label";
+// schemas
+import { PAYMENT_FORM_OPTIONS } from "src/core/schemas";
 // stores
 import { useSettingsStore } from "src/core/stores";
+// utils
+import { PEN_ICON } from "src/utils/constants";
 //
 import useCreateNote from '../hooks/useCreateNote';
 import NoteTable from "../components/note-table";
@@ -51,6 +59,9 @@ export default function NoteCreateForm() {
     removeItem
   } = useCreateNote();
 
+  const { watch } = methods;
+  const values = watch();
+
   return (
     <>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -76,13 +87,19 @@ export default function NoteCreateForm() {
                       )}
                     />
 
+                    {values.clientId > 0 && (
+                      <Button component={RouterLink} href={paths.admin.client.edit(values.clientId.toString())} sx={{ minWidth: 20, mt: 1.5, flexShrink: 0, }} variant="contained" size="small">
+                        <Iconify icon={PEN_ICON} />
+                      </Button>
+                    )}
+
                     <Button onClick={clientDialog.onTrue} sx={{ minWidth: 20, mt: 1.5, flexShrink: 0, }} variant="contained" size="small">
                       <Iconify icon="mingcute:add-line" />
                     </Button>
                   </Stack>
                 </Grid>
 
-                <Grid xs={12} md={4} lg={4}>
+                <Grid xs={12} md={6} lg={4}>
                   <Typography variant="subtitle2" sx={{ mb: 1 }}>
                     Fecha de Entrega
                   </Typography>
@@ -94,9 +111,23 @@ export default function NoteCreateForm() {
                     onSubmitting={isSubmitting}
                   />
                 </Grid>
+
+                <Grid xs={12} md={12} lg={12}>
+                  <RHFSelect name="paymentForm" label="Forma de Pago" disabled={isSubmitting}>
+                    {PAYMENT_FORM_OPTIONS.map((option) => (
+                      <MenuItem key={option.key} value={option.key}>
+                        {option.key} - {option.label}
+                      </MenuItem>
+                    ))}
+                  </RHFSelect>
+                </Grid>
+
+                <Grid xs={12} md={12} lg={12}>
+                  <RHFTextField multiline minRows={3} name="notes" label="Notas" disabled={isSubmitting} />
+                </Grid>
               </Grid>
 
-              <Grid xs={12} md={6} lg={12}>
+              <Grid xs={12} md={12} lg={12}>
                 <RHFSwitch
                   name="requiresInvoice"
                   labelPlacement="start"
@@ -110,7 +141,7 @@ export default function NoteCreateForm() {
                       </Typography>
                     </>
                   }
-                  sx={{ mx: 0, width: 1, justifyContent: 'space-between', display: 'flex' }}
+                  sx={{ mx: 0, mt: 2, width: 1, justifyContent: 'space-between', display: 'flex' }}
                   disabled={isSubmitting}
                 />
               </Grid>
@@ -213,8 +244,8 @@ export default function NoteCreateForm() {
               </Stack>
             </Card>
           </Grid>
-        </Grid>
-      </FormProvider>
+        </Grid >
+      </FormProvider >
 
       <ClientCreateDialog
         openDialog={clientDialog.value}

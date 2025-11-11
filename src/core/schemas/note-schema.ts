@@ -1,6 +1,8 @@
 // libs
 import z from 'src/libs/zod';
 import { dayjs } from 'src/libs/dayjs';
+//
+import { PaymentFormSchema } from './sub-schemas';
 
 // ----------------------------------------------------------------------
 // 🔹 Validador reutilizable para decimales con precisión (10,2)
@@ -60,6 +62,8 @@ export const NoteSchema = z.object({
     subtotal: decimalValidator,
     discount: decimalValidator,
     total: decimalValidator,
+    paymentForm: PaymentFormSchema,
+    notes: z.string().nullable(),
     noteDetails: z.array(NoteDetailSchema)
         .nonempty({ message: 'Debe agregar al menos un producto a la nota.' })
         .refine((details) => {

@@ -32,63 +32,34 @@ export default function LoginView() {
 
     const {
         //* state getters
-        loginType,
         password,
         errorMsg,
-        //? state setters
-        setLoginType,
         //& hookform
         handleSubmit,
         isSubmitting,
         onSubmit,
-        setValue,
         control,
         methods,
-        reset,
     } = useLogin();
-
-    const renderSwitch = (
-        <ToggleButtonGroup
-            value={loginType}
-            exclusive
-            onChange={(_, value) => {
-                if (value) {
-                    setLoginType(value);
-                    reset();
-                    setValue('identity', '');
-                }
-            }}
-            fullWidth
-            disabled={isSubmitting}
-            sx={{ mb: 2 }}
-        >
-            <ToggleButton disabled={isSubmitting} value="phone">Teléfono</ToggleButton>
-            <ToggleButton disabled={isSubmitting} value="document">Número de C.I</ToggleButton>
-        </ToggleButtonGroup>
-    );
 
     const renderForm = (
         <Stack spacing={2.5}>
             {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
 
-            {loginType === 'document' ? (
-                <RHFTextField name="identity" label="Número de C.I" />
-            ) : (
-                <Controller
-                    name="identity"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <RHFPhoneField
-                            disabled={isSubmitting}
-                            value={field.value}
-                            onChange={(val) => field.onChange(val)}
-                            fullWidth
-                            error={!!fieldState.error}
-                            helperText={fieldState.error?.message}
-                        />
-                    )}
-                />
-            )}
+            <Controller
+                name="identity"
+                control={control}
+                render={({ field, fieldState }) => (
+                    <RHFPhoneField
+                        disabled={isSubmitting}
+                        value={field.value}
+                        onChange={(val) => field.onChange(val)}
+                        fullWidth
+                        error={!!fieldState.error}
+                        helperText={fieldState.error?.message}
+                    />
+                )}
+            />
 
             <RHFTextField
                 name="password"
@@ -123,10 +94,8 @@ export default function LoginView() {
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Card sx={{ p: 3 }}>
                 <Stack spacing={0} sx={{ mb: 2 }}>
-                    <Typography variant="h4" textAlign="center">Iniciar Sesión en {appName}</Typography>
+                    <Typography variant="h4" textAlign="center">Iniciar Sesión</Typography>
                 </Stack>
-
-                {renderSwitch}
 
                 {renderForm}
             </Card>

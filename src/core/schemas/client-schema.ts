@@ -7,7 +7,6 @@ import { capitalizeString } from 'src/utils/format-string';
 //
 import {
     CFDISchema,
-    PaymentFormSchema,
     PaymentMethodSchema,
     TaxRegimeSchema,
     TypeSchema
@@ -20,12 +19,13 @@ const rfcBaseRegex = /^([A-ZÑ&]{3,4})([0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0
 export const DiagnosisHistory = z.object({
     diagnosisId: z.number().int().optional(),
     date: z.string().nullable(),
-    rightSphere: z.string().nullable(),
-    rightCylinder: z.string().nullable(),
-    rightAxis: z.string().nullable(),
     leftSphere: z.string().nullable(),
     leftCylinder: z.string().nullable(),
     leftAxis: z.string().nullable(),
+    di: z.string().nullable(),
+    rightSphere: z.string().nullable(),
+    rightCylinder: z.string().nullable(),
+    rightAxis: z.string().nullable(),
     addition: z.string().nullable(),
     notes: z.string().nullable(),
 }).readonly();
@@ -108,8 +108,6 @@ const ClientSchema = z.object({
         .nullable(),
     paymentMethod: PaymentMethodSchema
         .nullable(),
-    paymentForm: PaymentFormSchema
-        .nullable(),
     address: z
         .string()
         .toLowerCase()
@@ -130,6 +128,9 @@ const ClientSchema = z.object({
         .string()
         .trim(),
     leftCylinder: z
+        .string()
+        .trim(),
+    di: z
         .string()
         .trim(),
     rightAxis: z

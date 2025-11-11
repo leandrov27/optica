@@ -23,8 +23,6 @@ export default function useLogin() {
     const router = useRouter();
     const { login } = useAuthContext();
 
-    const [loginType, setLoginType] = useState<'phone' | 'document'>('phone');
-
     const [errorMsg, setErrorMsg] = useState('');
 
     const defaultValues = {
@@ -33,7 +31,7 @@ export default function useLogin() {
     };
 
     const methods = useForm<ILoginPayload>({
-        resolver: zodResolver(LoginSchema(loginType)),
+        resolver: zodResolver(LoginSchema),
         defaultValues,
     });
 
@@ -41,7 +39,6 @@ export default function useLogin() {
         reset,
         handleSubmit,
         control,
-        setValue,
         setError,
         formState: { isSubmitting },
     } = methods;
@@ -75,19 +72,14 @@ export default function useLogin() {
 
     return {
         //* state getters
-        loginType,
         password,
         errorMsg,
-        //? state setters
-        setLoginType,
         //& hookform
         handleSubmit,
         isSubmitting,
         control,
-        setValue,
         setError,
         onSubmit,
-        methods,
-        reset
+        methods
     }
 }

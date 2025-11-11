@@ -37,7 +37,6 @@ async function getClientById(id: string): Promise<IClientData> {
                     postalCode: true,
                     billingEmail: true,
                     paymentMethod: true,
-                    paymentForm: true,
                     address: true
                 }
             },
@@ -47,6 +46,7 @@ async function getClientById(id: string): Promise<IClientData> {
                     leftAxis: true,
                     leftSphere: true,
                     leftCylinder: true,
+                    di: true,
                     rightAxis: true,
                     rightSphere: true,
                     rightCylinder: true,

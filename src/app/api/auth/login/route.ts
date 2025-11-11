@@ -24,18 +24,12 @@ export async function POST(request: NextRequest) {
     }
 
     const user = await db.user.findFirst({
-      where: {
-        OR: [
-          { phone: identity },
-          { document: identity }
-        ]
-      },
+      where: { phone: identity },
       select: {
         id: true,
         firstName: true,
         lastName: true,
         phone: true,
-        document: true,
         password: true,
         role: true,
       }
@@ -60,7 +54,6 @@ export async function POST(request: NextRequest) {
     const accessToken = jwt.sign({
       id: user.id,
       phone: user.phone,
-      document: user.document,
       role: user.role
     }, JWT_SECRET, { expiresIn: '1h' });
 

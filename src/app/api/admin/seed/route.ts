@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 // libs
 import db from "src/libs/prisma";
 // config
-import { ADMIN_DOCUMENT, ADMIN_PASSWORD, ADMIN_PHONE, JWT_SECRET } from "src/config/config-server";
+import { ADMIN_PASSWORD, ADMIN_PHONE, JWT_SECRET } from "src/config/config-server";
 import { SOFT_NAME } from "src/config/config-public";
 // pkgs
 import bcrypt from 'bcryptjs';
@@ -40,12 +40,7 @@ export async function POST(request: Request) {
         const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, 10);
 
         const existingUser = await db.user.findFirst({
-            where: {
-                OR: [
-                    { phone: ADMIN_PHONE },
-                    { document: ADMIN_DOCUMENT }
-                ],
-            },
+            where: {phone: ADMIN_PHONE },      
         });
 
         if (existingUser) {
@@ -67,7 +62,6 @@ export async function POST(request: Request) {
                     firstName: 'Administrador',
                     lastName: 'Maestro',
                     displayName: 'Administrador Maestro',
-                    document: ADMIN_DOCUMENT,
                     phone: ADMIN_PHONE,
                     password: hashedPassword,
                     role: 'ADMIN',

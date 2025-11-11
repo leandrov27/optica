@@ -22,8 +22,6 @@ interface UserEditFormProps {
 
 export default function UserEditForm({ user }: UserEditFormProps) {
   const {
-    //^ states
-    password,
     //* hookform
     isSubmitting,
     handleSubmit,
@@ -65,8 +63,6 @@ export default function UserEditForm({ user }: UserEditFormProps) {
                   />
                 )}
               />
-
-              <RHFTextField name="document" label="Nro. de Documento" disabled={isSubmitting} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

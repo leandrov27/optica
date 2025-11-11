@@ -53,7 +53,6 @@ export async function PUT(request: Request, { params }: { params: { uid: string 
       select: {
         id: true,
         phone: true,
-        document: true,
         firstName: true,
         lastName: true,
         role: true,

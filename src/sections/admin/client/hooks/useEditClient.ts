@@ -13,7 +13,6 @@ import {
     CreateUpdateClientSchema,
     type ICFDIUse,
     type IClientData,
-    type IPaymentForm,
     type IPaymentMethod,
     type ITaxRegime,
     type ICreateUpdateClientPayload,
@@ -53,13 +52,13 @@ export default function useEditClient({ client }: useEditClientProps) {
         cfdiUse: client.taxInfo?.cfdiUse as ICFDIUse || 'G01',
         taxRegime: client.taxInfo?.taxRegime as ITaxRegime || '601',
         paymentMethod: client.taxInfo?.paymentMethod as IPaymentMethod || 'PUE',
-        paymentForm: client.taxInfo?.paymentForm as IPaymentForm || '01',
         address: client.taxInfo?.address || '',
         // CLIENT DIAGNOSES INFO DATA
         date: '',
         leftAxis: '',
         leftSphere: '',
         leftCylinder: '',
+        di: '',
         rightAxis: '',
         rightSphere: '',
         rightCylinder: '',
@@ -77,8 +76,10 @@ export default function useEditClient({ client }: useEditClientProps) {
         reset,
         watch,
         control,
+        setError,
         setValue,
         resetField,
+        clearErrors,
         handleSubmit,
         formState: { isSubmitting }
     } = methods;
@@ -105,7 +106,6 @@ export default function useEditClient({ client }: useEditClientProps) {
         resetField("cfdiUse");
         resetField("taxRegime");
         resetField("paymentMethod");
-        resetField("paymentForm");
         resetField("address");
     }
 
@@ -120,6 +120,27 @@ export default function useEditClient({ client }: useEditClientProps) {
     const formFields = watch();
     const diagnosisTable = watch('diagnoses');
 
+    useEffect(() => {
+        const fieldsToWatch = [
+            'date',
+            'leftAxis',
+            'leftSphere',
+            'leftCylinder',
+            'di',
+            'rightAxis',
+            'rightSphere',
+            'rightCylinder',
+            'addition',
+        ];
+
+        fieldsToWatch.forEach((field) => {
+            const value = (formFields as any)[field];
+            if (value && value.toString().trim() !== '') {
+                clearErrors(field as keyof ICreateUpdateClientPayload);
+            }
+        });
+    }, [formFields, clearErrors]);
+
     // -- ADD DIAGNOSE TO TABLE --
     const addDiagnoseItem = useCallback(() => {
         const newDiagnosisItem: IDiagnosisItem = {
@@ -128,6 +149,88 @@ export default function useEditClient({ client }: useEditClientProps) {
             leftAxis: formFields.leftAxis,
             leftSphere: formFields.leftSphere,
             leftCylinder: formFields.leftCylinder,
+            di: formFields.di,
+            //
+            rightAxis: formFields.rightAxis,
+            rightSphere: formFields.rightSphere,
+            rightCylinder: formFields.rightCylinder,
+            //
+            addition: formFields.addition,
+            notes: formFields.notes
+        };
+
+        // ✅ VALIDACIÓN: campos obligatorios (excepto notes)
+        const requiredFields = [
+            'date',
+            'leftAxis',
+            'leftSphere',
+            'leftCylinder',
+            'di',
+            'rightAxis',
+            'rightSphere',
+            'rightCylinder',
+            'addition'
+        ];
+
+        let hasEmptyRequired = false;
+
+        requiredFields.forEach((field) => {
+            const value = (newDiagnosisItem as any)[field];
+            if (!value || value.toString().trim() === '') {
+                hasEmptyRequired = true;
+                setError(field as keyof ICreateUpdateClientPayload, {
+                    type: 'manual',
+                    message: 'Campo obligatorio',
+                });
+            }
+        });
+
+        if (hasEmptyRequired) {
+            toast.error('Completa los campos del diagnóstico primero');
+            return;
+        }
+
+        // ✅ AGREGAR o ACTUALIZAR diagnóstico
+        if (editIndex !== null) {
+            const updatedFields = [...fields];
+            updatedFields[editIndex] = newDiagnosisItem as any;
+            replace(updatedFields);
+            setEditIndex(null);
+            toast.success('Diagnóstico actualizado', {
+                description: "El diagnóstico seleccionado se ha actualizado",
+            });
+        } else {
+            append(newDiagnosisItem);
+            toast.success('Diagnóstico agregado', {
+                description: "El diagnóstico se ha agregado a la lista",
+            });
+        }
+
+        // ✅ Limpiar campos
+        setValue('date', '');
+        //
+        setValue('leftAxis', '');
+        setValue('leftSphere', '');
+        setValue('leftCylinder', '');
+        setValue('di', '');
+        //
+        setValue('rightAxis', '');
+        setValue('rightSphere', '');
+        setValue('rightCylinder', '');
+        //
+        setValue('addition', '');
+        setValue('notes', '');
+    }, [append, fields, setValue, replace, editIndex, formFields, setError]);
+
+    /*
+    const addDiagnoseItem = useCallback(() => {
+        const newDiagnosisItem: IDiagnosisItem = {
+            date: formFields.date || '',
+            //
+            leftAxis: formFields.leftAxis,
+            leftSphere: formFields.leftSphere,
+            leftCylinder: formFields.leftCylinder,
+            di: formFields.di,
             //
             rightAxis: formFields.rightAxis,
             rightSphere: formFields.rightSphere,
@@ -158,6 +261,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('leftAxis', '');
         setValue('leftSphere', '');
         setValue('leftCylinder', '');
+        setValue('di', '');
         //
         setValue('rightAxis', '');
         setValue('rightSphere', '');
@@ -165,7 +269,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         //
         setValue('addition', '');
         setValue('notes', '');
-    }, [append, fields, setValue, replace, editIndex, formFields]);
+    }, [append, fields, setValue, replace, editIndex, formFields]);*/
 
     // -- REMOVE DIAGNOSE FROM TABLE --
     const removeDiagnoseItem = useCallback((index: number) => {
@@ -185,6 +289,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('leftAxis', '');
         setValue('leftSphere', '');
         setValue('leftCylinder', '');
+        setValue('di', '');
         //
         setValue('rightAxis', '');
         setValue('rightSphere', '');
@@ -205,6 +310,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('leftAxis', diagnoseToEdit.leftAxis || '');
         setValue('leftSphere', diagnoseToEdit.leftSphere || '');
         setValue('leftCylinder', diagnoseToEdit.leftCylinder || '');
+        setValue('di', diagnoseToEdit.di || '');
         //
         setValue('rightAxis', diagnoseToEdit.rightAxis || '');
         setValue('rightSphere', diagnoseToEdit.rightSphere || '');

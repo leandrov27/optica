@@ -13,7 +13,7 @@ import ax, { API_ENDPOINTS } from 'src/libs/fetcher';
 // pkgs
 import { toast } from 'sonner';
 // schemas
-import { UpdateNoteSchema, type INoteProduct, type INoteDetailPayload, type IUpdateNotePayload, type INoteByID } from 'src/core/schemas';
+import { UpdateNoteSchema, type INoteProduct, type INoteDetailPayload, type IUpdateNotePayload, type INoteByID, type IPaymentForm } from 'src/core/schemas';
 // stores
 import { useSettingsStore } from 'src/core/stores';
 
@@ -42,7 +42,9 @@ export default function useEditNote({ note }: useEditNoteProps) {
       requiresInvoice: note.requiresInvoice || false,
       subtotal: note.subtotal || 0,
       discount: note.discount || 0,
-      total: note.total ||0,
+      total: note.total || 0,
+      paymentForm: note.paymentForm as IPaymentForm || '01',
+      notes: note.notes || null,
       noteDetails: [...note.noteDetails],
     },
   });

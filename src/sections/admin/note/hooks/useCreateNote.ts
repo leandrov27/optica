@@ -37,6 +37,8 @@ export default function useCreateNote() {
       subtotal: 0,
       discount: 0,
       total: 0,
+      paymentForm: '01',
+      notes: '',
       noteDetails: [],
     },
   });

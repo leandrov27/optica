@@ -55,6 +55,7 @@ export type IClientData = {
         leftAxis: string | null;
         leftSphere: string | null;
         leftCylinder: string | null;
+        di: string | null;
         rightAxis: string | null;
         rightSphere: string | null;
         rightCylinder: string | null;
@@ -69,7 +70,6 @@ export type IClientData = {
         cfdiUse: string | null;
         taxRegime: string | null;
         paymentMethod: string | null;
-        paymentForm: string | null;
         address: string | null;
     } | null;
 };
@@ -96,6 +96,8 @@ export type INoteByID = {
     total: number;
     deliveryDate: string | null;
     requiresInvoice: boolean;
+    paymentForm: string;
+    notes: string | null;
     client: {
         displayName: string;
         phone: string;

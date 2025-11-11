@@ -1,5 +1,5 @@
 // @mui
-import { MobileDatePicker } from "@mui/x-date-pickers";
+import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers";
 // components
 import { Controller } from "react-hook-form";
 // libs
@@ -20,9 +20,8 @@ export default function DatePicker({ control, onSubmitting }: DatePickerProps) {
             name="date"
             control={control}
             render={({ field }) => (
-                <MobileDatePicker
+                <MuiDatePicker
                     label="Fecha"
-                    format={field.value ? "dddd DD [de] MMMM [de] YYYY" : ""}
                     minDate={dayjs().startOf("year")}
                     maxDate={dayjs().endOf("year")}
                     value={field.value ? dayjs(field.value) : null}

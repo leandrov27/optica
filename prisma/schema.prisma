@@ -16,7 +16,6 @@ model User {
     lastName    String   @map("apellido")
     displayName String   @map("display_name")
     phone       String   @unique @map("telefono")
-    document    String   @unique @map("nro_documento")
     password    String
     status      Status   @default(INACTIVO) @map("estado")
     role        Role     @default(CLIENT) @map("rol")
@@ -55,7 +54,6 @@ model TaxInfo {
     taxRegime     String? @map("regimen_fiscal") @db.VarChar(100)
     cfdiUse       String? @map("uso_cfdi") @db.VarChar(10)
     paymentMethod String? @map("metodo_pago") @db.VarChar(5)
-    paymentForm   String? @map("forma_pago") @db.VarChar(5)
     billingEmail  String? @map("correo_facturacion") @db.VarChar(150)
     address       String? @map("domicilio")
 
@@ -71,6 +69,7 @@ model Diagnosis {
     date          String  @map("fecha")
     rightSphere   String? @map("od_esfera") @db.VarChar(10)
     rightCylinder String? @map("od_cilindro") @db.VarChar(10)
+    di            String? @map("di") @db.VarChar(10)
     rightAxis     String? @map("od_eje") @db.VarChar(10)
     leftSphere    String? @map("oi_esfera") @db.VarChar(10)
     leftCylinder  String? @map("oi_cilindro") @db.VarChar(10)
@@ -118,9 +117,12 @@ model SaleNote {
     date            DateTime @default(now()) @map("fecha")
     deliveryDate    String?  @map("fecha_entrega")
     requiresInvoice Boolean  @default(false) @map("requiere_factura")
+    paymentForm     String   @map("forma_pago") @db.VarChar(5)
     subtotal        Decimal  @db.Decimal(10, 2)
     discount        Decimal  @map("descuento") @db.Decimal(10, 2)
-    total           Decimal  @db.Decimal(10, 2)
+
+    total Decimal @db.Decimal(10, 2)
+    notes String? @map("notas")
 
     // Relations
     client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)

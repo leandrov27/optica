@@ -25,7 +25,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(({ disabledLink = false, sx, 
   const logo = (
     <Avatar
       {...other}
-      src={settings?.businessLogoUrl || LOGO_PLACEHOLDER_PATH}
+      src={settings?.businessLogoUrl ? settings?.businessLogoUrl : LOGO_PLACEHOLDER_PATH}
       sx={{
         width: 40,
         height: 40,

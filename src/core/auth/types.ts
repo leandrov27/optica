@@ -12,7 +12,6 @@ export type ActionMapType<M extends { [index: string]: any }> = {
 export type IAccessToken = {
   id: number;
   phone: string;
-  document: string;
   role: 'ADMIN' | 'CLIENT';
   exp: number;
   iat: number;
@@ -22,7 +21,6 @@ type IAuthenticatedUser = {
   id: number;
   firstName: string;
   lastName: string;
-  document: string;
   phone: string;
   role: 'ADMIN' | 'CLIENT';
 };

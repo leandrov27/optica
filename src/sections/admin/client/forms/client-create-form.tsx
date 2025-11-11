@@ -3,6 +3,8 @@
 // react
 import { useEffect, useMemo } from 'react';
 // @mui
+import Box from '@mui/material/Box';
+import Fab from '@mui/material/Fab';
 import Fade from '@mui/material/Fade';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -15,10 +17,10 @@ import LoadingButton from '@mui/lab/LoadingButton';
 // components
 import FormProvider, { RHFPhoneField, RHFSelect, RHFSwitch, RHFTextField } from 'src/components/hook-form';
 import { Controller } from 'react-hook-form';
+import Iconify from 'src/components/iconify';
 // schemas
 import {
     CFDI_USE_OPTIONS,
-    PAYMENT_FORM_OPTIONS,
     TAX_REGIME_OPTIONS,
     PaymentMethodSchema,
     TypeSchema
@@ -62,6 +64,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
             leftSphere: f.leftSphere,
             leftCylinder: f.leftCylinder,
             leftAxis: f.leftAxis,
+            di: f.di,
             addition: f.addition,
             notes: f.notes,
         }))
@@ -76,30 +79,28 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
             <Grid container spacing={3}>
                 <Grid xs={12} md={12} lg={12}>
                     <Card sx={{ p: 2 }}>
-                        <Stack flexDirection="row" justifyContent="space-between" alignItems="center">
-                            <Stack flexDirection="column" gap={3}>
-                                <RHFSwitch
-                                    name="enableTaxInfo"
-                                    labelPlacement="start"
-                                    label={
-                                        <>
-                                            <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                                                {isTaxInfoEnabled ? 'Deshabilitar' : 'Habilitar'} datos de facturación
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                Si está activo, podrá registrar información fiscal.
-                                            </Typography>
-                                        </>
-                                    }
-                                    sx={{ mx: 0, width: 1, justifyContent: 'space-between', display: 'flex' }}
-                                    disabled={isSubmitting}
-                                />
-                            </Stack>
-
-                            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                                Guardar
-                            </LoadingButton>
-                        </Stack>
+                        <RHFSwitch
+                            name="enableTaxInfo"
+                            labelPlacement="start" // Esto coloca el texto a la izquierda
+                            label={
+                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+                                        {isTaxInfoEnabled ? 'Deshabilitar' : 'Habilitar'} datos de facturación
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                        Si está activo, podrá registrar información fiscal.
+                                    </Typography>
+                                </Box>
+                            }
+                            sx={{
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                m: 0,
+                            }}
+                            disabled={isSubmitting}
+                        />
                     </Card>
                 </Grid>
 
@@ -223,7 +224,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                         <RHFTextField name="billingEmail" label="Correo de facturación" disabled={isSubmitting || !isTaxInfoEnabled} />
                                     </Grid>
 
-                                    <Grid xs={12} md={6} lg={6}>
+                                    <Grid xs={12} md={12} lg={12}>
                                         <RHFSelect name="paymentMethod" label="Método de Pago" disabled={isSubmitting || !isTaxInfoEnabled}>
                                             <MenuItem value={PaymentMethodSchema.enum.PUE}>
                                                 PUE - Pago en una sola exhibición
@@ -235,17 +236,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                         </RHFSelect>
                                     </Grid>
 
-                                    <Grid xs={12} md={6} lg={6}>
-                                        <RHFSelect name="paymentForm" label="Forma de Pago" disabled={isSubmitting || !isTaxInfoEnabled}>
-                                            {PAYMENT_FORM_OPTIONS.map((option) => (
-                                                <MenuItem key={option.key} value={option.key}>
-                                                    {option.key} - {option.label}
-                                                </MenuItem>
-                                            ))}
-                                        </RHFSelect>
-                                    </Grid>
-
-                                    <Grid xs={12} md={3} lg={12}>
+                                    <Grid xs={12} md={12} lg={12}>
                                         <RHFTextField name="address" label="Domicilio" disabled={isSubmitting || !isTaxInfoEnabled} />
                                     </Grid>
                                 </Grid>
@@ -280,14 +271,6 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                 />
                             </Grid>
 
-                            <Grid xs={12} md={12} lg={12}>
-                                <RHFTextField
-                                    name="notes"
-                                    label="Notas"
-                                    disabled={isSubmitting}
-                                />
-                            </Grid>
-
                             {/* Sección Ojo Izquierdo */}
                             <Grid xs={12}>
                                 <Typography variant="subtitle1">
@@ -295,7 +278,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                 </Typography>
                             </Grid>
 
-                            <Grid xs={4} md={4} lg={4}>
+                            <Grid xs={3} md={3} lg={3}>
                                 <RHFTextField
                                     name="leftSphere"
                                     label="Esfera"
@@ -304,7 +287,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                 />
                             </Grid>
 
-                            <Grid xs={4} md={4} lg={4}>
+                            <Grid xs={3} md={3} lg={3}>
                                 <RHFTextField
                                     name="leftCylinder"
                                     label="Cilindro"
@@ -313,12 +296,21 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                 />
                             </Grid>
 
-                            <Grid xs={4} md={4} lg={4}>
+                            <Grid xs={3} md={3} lg={3}>
                                 <RHFTextField
                                     name="leftAxis"
                                     label="Eje"
                                     disabled={isSubmitting}
                                     placeholder="1-180"
+                                />
+                            </Grid>
+
+                            <Grid xs={3} md={3} lg={3}>
+                                <RHFTextField
+                                    name="di"
+                                    label="DI"
+                                    disabled={isSubmitting}
+                                    placeholder=""
                                 />
                             </Grid>
 
@@ -357,16 +349,13 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                             </Grid>
 
                             <Grid xs={12} md={12} lg={12}>
-                                <Divider sx={{ mt: 1, mb: 2.5 }} />
-
-                                <LoadingButton
-                                    fullWidth
-                                    onClick={addDiagnoseItem}
-                                    variant={editIndex !== null ? "contained" : "outlined"}
+                                <RHFTextField
+                                    multiline
+                                    minRows={3}
+                                    name="notes"
+                                    label="Notas"
                                     disabled={isSubmitting}
-                                >
-                                    {editIndex !== null ? "Actualizar Diagnóstico" : "Agregar Diagnóstico"}
-                                </LoadingButton>
+                                />
                             </Grid>
 
                             {/* Tabla de diagnósticos */}
@@ -377,9 +366,39 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                     onEdit={editDiagnoseItem}
                                 />
                             </Grid>
+
+                            <Grid xs={12} md={12} lg={12}>
+                                <Divider sx={{ mt: 1, mb: 2.5 }} />
+
+                                <LoadingButton
+                                    color={editIndex !== null ? "primary" : "success"}
+                                    onClick={addDiagnoseItem}
+                                    variant="contained"
+                                    disabled={isSubmitting}
+                                    sx={{
+                                        float: 'inline-end'
+                                    }}
+                                >
+                                    {editIndex !== null ? "Actualizar Diagnóstico" : "Agregar Diagnóstico"}
+                                </LoadingButton>
+                            </Grid>
+
                         </Grid>
                     </Card>
                 </Grid>
+                <Fab
+                    type="submit"
+                    sx={{
+                        position: 'fixed',
+                        right: 20,
+                        bottom: 20
+                    }}
+                    color="primary"
+                    aria-label="guardar"
+                    disabled={isSubmitting}
+                >
+                    <Iconify icon="fluent:save-20-regular" width={38} />
+                </Fab>
             </Grid>
         </FormProvider>
     );

@@ -23,7 +23,6 @@ async function getUserById(id: string): Promise<IUserData> {
         select: {
             id: true,
             phone: true,
-            document: true,
             firstName: true,
             lastName: true,
             displayName: true,

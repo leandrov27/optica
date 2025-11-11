@@ -16,8 +16,10 @@ import {
 } from 'src/core/schemas';
 // libs
 import ax, { API_ENDPOINTS } from 'src/libs/fetcher';
+import { dayjs } from 'src/libs/dayjs';
 // pckgs
 import { toast } from 'sonner';
+
 
 // ----------------------------------------------------------------------
 
@@ -45,13 +47,13 @@ export default function useCreateClient() {
             cfdiUse: 'G01',
             taxRegime: '601',
             paymentMethod: 'PUE',
-            paymentForm: '01',
             address: '',
             // CLIENT DIAGNOSES INFO DATA
-            date: '',
+            date: dayjs().format('DD-MM-YYYY'),
             leftAxis: '',
             leftSphere: '',
             leftCylinder: '',
+            di: '',
             rightAxis: '',
             rightSphere: '',
             rightCylinder: '',
@@ -68,6 +70,7 @@ export default function useCreateClient() {
         setValue,
         resetField,
         handleSubmit,
+        clearErrors,
         formState: { isSubmitting }
     } = methods;
 
@@ -95,7 +98,6 @@ export default function useCreateClient() {
         resetField("cfdiUse");
         resetField("taxRegime");
         resetField("paymentMethod");
-        resetField("paymentForm");
         resetField("address");
     }
 
@@ -110,7 +112,29 @@ export default function useCreateClient() {
     const formFields = watch();
     const diagnosisTable = watch('diagnoses');
 
+    useEffect(() => {
+        const fieldsToWatch = [
+            'date',
+            'leftAxis',
+            'leftSphere',
+            'leftCylinder',
+            'di',
+            'rightAxis',
+            'rightSphere',
+            'rightCylinder',
+            'addition',
+        ];
+
+        fieldsToWatch.forEach((field) => {
+            const value = (formFields as any)[field];
+            if (value && value.toString().trim() !== '') {
+                clearErrors(field as keyof ICreateUpdateClientPayload);
+            }
+        });
+    }, [formFields, clearErrors]);
+
     // -- ADD DIAGNOSE TO TABLE --
+    /*
     const addDiagnoseItem = useCallback(() => {
         const newDiagnosisItem: IDiagnosisItem = {
             date: formFields.date,
@@ -118,6 +142,7 @@ export default function useCreateClient() {
             leftAxis: formFields.leftAxis,
             leftSphere: formFields.leftSphere,
             leftCylinder: formFields.leftCylinder,
+            di: formFields.di,
             //
             rightAxis: formFields.rightAxis,
             rightSphere: formFields.rightSphere,
@@ -148,6 +173,7 @@ export default function useCreateClient() {
         setValue('leftAxis', '');
         setValue('leftSphere', '');
         setValue('leftCylinder', '');
+        setValue('di', '');
         //
         setValue('rightAxis', '');
         setValue('rightSphere', '');
@@ -155,7 +181,91 @@ export default function useCreateClient() {
         //
         setValue('addition', '');
         setValue('notes', '');
-    }, [append, fields, setValue, replace, editIndex, formFields]);
+    }, [append, fields, setValue, replace, editIndex, formFields]);*/
+
+    const addDiagnoseItem = useCallback(() => {
+        const newDiagnosisItem: IDiagnosisItem = {
+            date: formFields.date,
+            //
+            leftAxis: formFields.leftAxis,
+            leftSphere: formFields.leftSphere,
+            leftCylinder: formFields.leftCylinder,
+            di: formFields.di,
+            //
+            rightAxis: formFields.rightAxis,
+            rightSphere: formFields.rightSphere,
+            rightCylinder: formFields.rightCylinder,
+            //
+            addition: formFields.addition,
+            notes: formFields.notes
+        };
+
+        // ✅ Campos requeridos (excepto notes)
+        const requiredFields: (keyof IDiagnosisItem)[] = [
+            'date',
+            'leftAxis',
+            'leftSphere',
+            'leftCylinder',
+            'di',
+            'rightAxis',
+            'rightSphere',
+            'rightCylinder',
+            'addition'
+        ];
+
+        // Limpia errores anteriores
+        requiredFields.forEach((field) => {
+            methods.clearErrors(field as any);
+        });
+
+        // Verifica campos vacíos
+        const emptyFields = requiredFields.filter(
+            (field) => !newDiagnosisItem[field] || newDiagnosisItem[field]?.toString().trim() === ''
+        );
+
+        if (emptyFields.length > 0) {
+            emptyFields.forEach((field) => {
+                methods.setError(field as any, {
+                    type: 'manual',
+                    message: 'Campo requerido',
+                });
+            });
+
+            toast.error('Completa los campos del diagnóstico primero');
+            return;
+        }
+
+        // ✅ Si pasa la validación:
+        if (editIndex !== null) {
+            const updatedFields = [...fields];
+            updatedFields[editIndex] = newDiagnosisItem as any;
+            replace(updatedFields);
+            setEditIndex(null);
+            toast.success('Diagnóstico actualizado', {
+                description: "El diagnóstico seleccionado se ha actualizado",
+            });
+        } else {
+            append(newDiagnosisItem);
+            toast.success('Diagnóstico agregado', {
+                description: "El diagnóstico se ha agregado a la lista",
+            });
+        }
+
+        // Limpia campos del formulario
+        setValue('date', '');
+        //
+        setValue('leftAxis', '');
+        setValue('leftSphere', '');
+        setValue('leftCylinder', '');
+        setValue('di', '');
+        //
+        setValue('rightAxis', '');
+        setValue('rightSphere', '');
+        setValue('rightCylinder', '');
+        //
+        setValue('addition', '');
+        setValue('notes', '');
+    }, [append, fields, setValue, replace, editIndex, formFields, methods]);
 
     // -- REMOVE DIAGNOSE FROM TABLE --
     const removeDiagnoseItem = useCallback((index: number) => {
@@ -175,6 +285,7 @@ export default function useCreateClient() {
         setValue('leftAxis', '');
         setValue('leftSphere', '');
         setValue('leftCylinder', '');
+        setValue('di', '');
         //
         setValue('rightAxis', '');
         setValue('rightSphere', '');
@@ -195,6 +306,7 @@ export default function useCreateClient() {
         setValue('leftAxis', diagnoseToEdit.leftAxis || '');
         setValue('leftSphere', diagnoseToEdit.leftSphere || '');
         setValue('leftCylinder', diagnoseToEdit.leftCylinder || '');
+        setValue('di', diagnoseToEdit.di || '');
         //
         setValue('rightAxis', diagnoseToEdit.rightAxis || '');
         setValue('rightSphere', diagnoseToEdit.rightSphere || '');

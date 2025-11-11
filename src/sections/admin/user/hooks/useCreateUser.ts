@@ -29,7 +29,6 @@ export default function useCreateUser() {
         defaultValues: {
             firstName: '',
             lastName: '',
-            document: '',
             phone: '',
             password: '',
             role: 'ADMIN'

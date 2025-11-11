@@ -55,6 +55,7 @@ export async function POST(request: Request) {
             leftSphere: diagnose.leftSphere || null,
             leftCylinder: diagnose.leftCylinder || null,
             leftAxis: diagnose.leftAxis || null,
+            di: diagnose.di || null,
             addition: diagnose.addition || null,
             notes: diagnose.notes || null,
         }));
@@ -73,7 +74,6 @@ export async function POST(request: Request) {
                             taxRegime: parsed.taxRegime || null,
                             cfdiUse: parsed.cfdiUse || null,
                             paymentMethod: parsed.paymentMethod || null,
-                            paymentForm: parsed.paymentForm || null,
                             billingEmail: parsed.billingEmail || null,
                             address: parsed.address || null,
                         }
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
                 { status: 409 }
             );
         }
-        
+
         return NextResponse.json(
             { message: error.message || 'Internal server error' },
             { status: 500 }

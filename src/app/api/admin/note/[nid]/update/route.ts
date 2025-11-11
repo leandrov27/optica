@@ -63,6 +63,8 @@ export async function POST(request: Request, { params }: { params: { nid: string
                     clientId: parsed.clientId,
                     deliveryDate: parsed.deliveryDate,
                     requiresInvoice: parsed.requiresInvoice,
+                    paymentForm: parsed.paymentForm,
+                    notes: parsed.notes,
                     subtotal,
                     discount,
                     total,

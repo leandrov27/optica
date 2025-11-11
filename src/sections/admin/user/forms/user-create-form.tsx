@@ -63,8 +63,6 @@ export default function UserCreateForm() {
                                 )}
                             />
 
-                            <RHFTextField name="document" label="Nro. de Documento" disabled={isSubmitting} />
-
                             <RHFTextField
                                 name="password"
                                 label="Contraseña"

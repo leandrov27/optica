@@ -15,7 +15,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 // types
 import { type IClientRaw } from 'src/core/schemas';
 //
-import ClientContainer from '../components/client-container';
+import ClientTable from '../components/client-table';
 
 // ----------------------------------------------------------------------
 
@@ -67,14 +67,14 @@ export default function ClientListView({
         }}
       />
 
-      <ClientContainer
+      <ClientTable
         clients={clients}
         searchTerm={searchTerm}
         //
         currentPage={currentPage}
         totalPages={totalPages}
         //
-        totalItems={totalItems}
+        totalCount={totalItems}
         from={from}
         to={to}
       />

@@ -13,7 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useBoolean } from "src/hooks/use-boolean";
 // components
 import FormProvider from 'src/components/hook-form/form-provider';
-import { RHFSwitch } from 'src/components/hook-form';
+import { RHFSelect, RHFSwitch, RHFTextField } from 'src/components/hook-form';
 import { Controller } from "react-hook-form";
 import Iconify from "src/components/iconify";
 import Label from "src/components/label";
@@ -25,12 +25,13 @@ import NoteTable from "../components/note-table";
 import ProductAutocomplete from '../widgets/product-autocomplete';
 import DatePicker from '../widgets/date-picker';
 // schemas
-import { type INoteByID } from "src/core/schemas";
+import { PAYMENT_FORM_OPTIONS, type INoteByID } from "src/core/schemas";
 // pkgs
 import { PDFDownloadLink } from "@react-pdf/renderer";
 //
 import NotePDF from "../components/note-pdf";
 import ProductNewEditDialog from '../../product/forms/product-new-edit-dialog';
+import { MenuItem } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -95,6 +96,20 @@ export default function NoteEditForm({ note }: NoteEditFormProps) {
                 control={control}
                 onSubmitting={isSubmitting}
               />
+            </Grid>
+
+            <Grid xs={12} md={12} lg={12}>
+              <RHFSelect name="paymentForm" label="Forma de Pago" disabled={isSubmitting}>
+                {PAYMENT_FORM_OPTIONS.map((option) => (
+                  <MenuItem key={option.key} value={option.key}>
+                    {option.key} - {option.label}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            </Grid>
+
+            <Grid xs={12} md={12} lg={12}>
+              <RHFTextField multiline minRows={3} name="notes" label="Notas" disabled={isSubmitting} />
             </Grid>
           </Grid>
 
