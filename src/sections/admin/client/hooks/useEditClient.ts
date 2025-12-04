@@ -20,6 +20,7 @@ import {
 } from 'src/core/schemas';
 // libs
 import ax, { API_ENDPOINTS } from 'src/libs/fetcher';
+import { dayjs } from 'src/libs/dayjs';
 // pckgs
 import { toast } from 'sonner';
 
@@ -54,7 +55,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         paymentMethod: client.taxInfo?.paymentMethod as IPaymentMethod || 'PUE',
         address: client.taxInfo?.address || '',
         // CLIENT DIAGNOSES INFO DATA
-        date: '',
+        date: dayjs().format('YYYY-MM-DD'),
         leftAxis: '',
         leftSphere: '',
         leftCylinder: '',

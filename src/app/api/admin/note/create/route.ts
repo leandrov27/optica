@@ -7,7 +7,7 @@ import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
 import { CreateNoteSchema, type ICreateNotePayload } from "src/core/schemas";
 // generated
-import { Decimal } from "src/generated/prisma/runtime/library";
+import { Decimal } from "src/generated/prisma/runtime/client";
 
 // ----------------------------------------------------------------------
 

@@ -204,38 +204,48 @@ export const CreateUpdateClientSchema = ClientSchema.omit({ id: true, displayNam
         }
     }
 
-    issues.push({
-        code: 'custom',
-        path: ['rfc'],
-        message: 'El RFC es requerido cuando la información fiscal está habilitada',
-        input: [rfc]
-    });
+    if (enableTaxInfo && !value.rfc) {
+        issues.push({
+            code: 'custom',
+            path: ['rfc'],
+            message: 'El RFC es requerido cuando la información fiscal está habilitada',
+            input: [rfc]
+        });
+    }
 
-    issues.push({
-        code: 'custom',
-        path: ['businessName'],
-        message: 'La razón social es requerida cuando la información fiscal está habilitada',
-        input: [businessName]
-    });
+    if (enableTaxInfo && !value.businessName) {
+        issues.push({
+            code: 'custom',
+            path: ['businessName'],
+            message: 'La razón social es requerida cuando la información fiscal está habilitada',
+            input: [businessName]
+        });
+    }
 
-    issues.push({
-        code: 'custom',
-        path: ['postalCode'],
-        message: 'El código postal es requerido cuando la información fiscal está habilitada',
-        input: [postalCode]
-    });
+    if (enableTaxInfo && !value.postalCode) {
+        issues.push({
+            code: 'custom',
+            path: ['postalCode'],
+            message: 'El código postal es requerido cuando la información fiscal está habilitada',
+            input: [postalCode]
+        });
+    }
 
-    issues.push({
-        code: 'custom',
-        path: ['billingEmail'],
-        message: 'El correo de facturación es requerido cuando la información fiscal está habilitada',
-        input: [billingEmail]
-    });
+    if (enableTaxInfo && !value.billingEmail) {
+        issues.push({
+            code: 'custom',
+            path: ['billingEmail'],
+            message: 'El correo de facturación es requerido cuando la información fiscal está habilitada',
+            input: [billingEmail]
+        });
+    }
 
-    issues.push({
-        code: 'custom',
-        path: ['address'],
-        message: 'El domicilio es requerido cuando la información fiscal está habilitada',
-        input: [address]
-    });
+    if (enableTaxInfo && !value.address) {
+        issues.push({
+            code: 'custom',
+            path: ['address'],
+            message: 'El domicilio es requerido cuando la información fiscal está habilitada',
+            input: [address]
+        });
+    }
 });

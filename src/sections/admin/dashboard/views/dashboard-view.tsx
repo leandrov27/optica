@@ -62,7 +62,7 @@ export default function DashboardView() {
                             <Typography variant="subtitle1" gutterBottom>
                                 Prisma
                             </Typography>
-                            <Typography variant='subtitle2' sx={{ color: 'text.secondary', mt: -1.5 }}>v6.18</Typography>
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary', mt: -1.5 }}>v7.1</Typography>
                         </Box>
                     </Grid>
 

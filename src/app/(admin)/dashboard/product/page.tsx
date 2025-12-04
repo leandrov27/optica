@@ -5,7 +5,7 @@ import ErrorCard from 'src/components/error-card';
 // libs
 import db from 'src/libs/prisma';
 // types
-import { type ICategoryData, type IProductData } from 'src/core/schemas';
+import { type IProductData } from 'src/core/schemas';
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +61,7 @@ const getProductsPaginated = async (
             description: true,
             price: true,
             notes: true,
+            satCodeId: true,
             category: {
                 select: {
                     id: true,

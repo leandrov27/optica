@@ -77,33 +77,6 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
     return (
         <FormProvider methods={methods} onSubmit={handleSubmit(sendForm)}>
             <Grid container spacing={3}>
-                <Grid xs={12} md={12} lg={12}>
-                    <Card sx={{ p: 2 }}>
-                        <RHFSwitch
-                            name="enableTaxInfo"
-                            labelPlacement="start" // Esto coloca el texto a la izquierda
-                            label={
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                                        {isTaxInfoEnabled ? 'Deshabilitar' : 'Habilitar'} datos de facturación
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        Si está activo, podrá registrar información fiscal.
-                                    </Typography>
-                                </Box>
-                            }
-                            sx={{
-                                width: '100%',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                m: 0,
-                            }}
-                            disabled={isSubmitting}
-                        />
-                    </Card>
-                </Grid>
-
                 {/** DATOS PERSONALES */}
                 <Grid xs={12} md={isTaxInfoEnabled ? 6 : 12} lg={isTaxInfoEnabled ? 6 : 12} sx={{ transition: 'all 0.5s ease-in-out' }}>
                     <Card sx={{ p: 3 }}>
@@ -165,6 +138,31 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
 
                             <Grid xs={12} md={12} lg={12}>
                                 <RHFTextField name="observations" multiline minRows={3} label="Observaciones" disabled={isSubmitting} />
+                            </Grid>
+
+                            <Grid xs={12} md={12} lg={12}>
+                                <RHFSwitch
+                                    name="enableTaxInfo"
+                                    labelPlacement="start"
+                                    label={
+                                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                            <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+                                                {isTaxInfoEnabled ? 'Deshabilitar' : 'Habilitar'} datos de facturación
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                Si está activo, podrá registrar información fiscal.
+                                            </Typography>
+                                        </Box>
+                                    }
+                                    sx={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        m: 0,
+                                    }}
+                                    disabled={isSubmitting}
+                                />
                             </Grid>
                         </Grid>
                     </Card>

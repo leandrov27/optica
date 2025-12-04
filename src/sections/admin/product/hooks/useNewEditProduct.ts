@@ -36,6 +36,7 @@ export default function useNewEditProduct({ product }: useNewEditProductProps) {
     const defaultValues = useMemo<ICreateProductPayload | IUpdateProductPayload>(
         () => ({
             categoryId: product?.category.id || 0,
+            satCodeId: product?.satCodeId || 0,
             code: product?.code || '',
             description: product?.description || '',
             price: Number(product?.price) || 0,
@@ -47,12 +48,14 @@ export default function useNewEditProduct({ product }: useNewEditProductProps) {
     useEffect(() => {
         if (product) {
             setValue('categoryId', product.category.id);
+            setValue('satCodeId', product.satCodeId);
             setValue('code', product.code);
             setValue('description', product.description);
             setValue('price', Number(product.price));
             setValue('notes', product.notes);
         } else {
             setValue('categoryId', 0);
+            setValue('satCodeId', 0);
             setValue('code', '');
             setValue('description', '');
             setValue('price', 0);

@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
     provider = "mysql"
-    url      = env("DATABASE_URL")
 }
 
 // ----------------------------------------------------------------------
@@ -83,9 +82,21 @@ model Diagnosis {
     @@map("diagnosticos")
 }
 
+model SatCode {
+    id      Int    @id @default(autoincrement()) @map("id_sat_code")
+    name    String @db.VarChar(255)
+    codeSat String @unique @map("codigo_sat") @db.VarChar(20)
+
+    // Relation
+    products Product[]
+
+    @@map("sat_codigos")
+}
+
 model Product {
     id          Int     @id @default(autoincrement()) @map("id_producto")
     categoryId  Int     @map("id_categoria")
+    satCodeId   Int     @map("id_sat_code")
     code        String  @unique @map("codigo") @db.VarChar(50)
     description String  @map("descripcion") @db.VarChar(255)
     price       Decimal @map("precio") @db.Decimal(10, 2)
@@ -94,6 +105,7 @@ model Product {
     // Relations
     noteDetails NoteDetail[]
     category    Category     @relation(fields: [categoryId], references: [id])
+    satCode     SatCode?     @relation(fields: [satCodeId], references: [id])
 
     @@map("productos")
 }

@@ -33,11 +33,15 @@ export const API_ENDPOINTS = {
       search_client: (query: string) => `${ROOTS_API.admin}/note/search-client?q=${encodeURIComponent(query)}`,
       search_product: (query: string) => `${ROOTS_API.admin}/note/search-product?q=${encodeURIComponent(query)}`,
     },
+    sat: {
+      create: `${ROOTS_API.admin}/sat/create`,
+    },
     product: {
       create: `${ROOTS_API.admin}/product/create`,
       update: (id: number) => `${ROOTS_API.admin}/product/${id}/update`,
       delete: (id: number) => `${ROOTS_API.admin}/product/${id}/delete`,
       search_category: (query: string) => `${ROOTS_API.admin}/product/search-category?q=${encodeURIComponent(query)}`,
+      search_sat: (query: string) => `${ROOTS_API.admin}/product/search-sat?q=${encodeURIComponent(query)}`,
     },
     category: {
       create: `${ROOTS_API.admin}/category/create`,

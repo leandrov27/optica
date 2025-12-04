@@ -28,6 +28,9 @@ import CategoryNewEditDialog from '../../category/forms/category-new-edit-dialog
 //
 import useNewEditProduct from '../hooks/useNewEditProduct';
 import CategoryAutocomplete from '../widgets/category-autocomplete';
+import SatAutocomplete from '../widgets/sat-autocomplete';
+import SatCodeNewDialog from './sat-code-new-dialog';
+import { useBoolean } from 'src/hooks/use-boolean';
 
 // ----------------------------------------------------------------------
 
@@ -47,6 +50,8 @@ export default function ProductNewEditDialog({ product, openDialog = false, onCl
     const openCategoryDialog = useCategoryDialogStore((state) => state.openDialog);
     const closeCategoryDialog = useCategoryDialogStore((state) => state.closeDialog);
 
+    const satDialog = useBoolean();
+    
     const {
         //^ states
         isEdit,
@@ -126,6 +131,27 @@ export default function ProductNewEditDialog({ product, openDialog = false, onCl
                             </Stack>
                         </Grid>
 
+                        <Grid xs={12} md={12} lg={12}>
+                            <Stack flexDirection="row" alignItems="flex-start" justifyContent="center" gap={1} sx={{ width: '100%', flexShrink: 1 }}>
+                                <Controller
+                                    name="satCodeId"
+                                    control={control}
+                                    render={({ field, fieldState }) => (
+                                        <SatAutocomplete
+                                            onSubmitting={isSubmitting}
+                                            helperText={fieldState.error?.message}
+                                            error={fieldState.invalid}
+                                            onHandleChange={field.onChange}
+                                        />
+                                    )}
+                                />
+
+                                <Button onClick={satDialog.onTrue} sx={{ minWidth: 20, mt: 1.5, flexShrink: 0, }} variant="contained" size="small">
+                                    <Iconify icon="mingcute:add-line" />
+                                </Button>
+                            </Stack>
+                        </Grid>
+
                         <Grid xs={4} md={4} lg={4}>
                             <RHFTextField
                                 name="code"
@@ -186,6 +212,11 @@ export default function ProductNewEditDialog({ product, openDialog = false, onCl
             <CategoryNewEditDialog
                 openDialog={categoryDialogStatus}
                 onCloseDialog={closeCategoryDialog}
+            />
+
+            <SatCodeNewDialog
+                openDialog={satDialog.value}
+                onCloseDialog={satDialog.onFalse}
             />
         </Dialog>
     );

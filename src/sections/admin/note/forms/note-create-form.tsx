@@ -69,7 +69,7 @@ export default function NoteCreateForm() {
           <Grid xs={12} md={12} lg={12}>
             <Card sx={{ p: 3 }}>
               <Grid container spacing={2}>
-                <Grid xs={12} md={6} lg={8}>
+                <Grid xs={12} md={6} lg={12}>
                   <Typography variant="subtitle2" sx={{ mb: 1 }}>
                     Cliente
                   </Typography>
@@ -99,6 +99,7 @@ export default function NoteCreateForm() {
                   </Stack>
                 </Grid>
 
+                {/** 
                 <Grid xs={12} md={6} lg={4}>
                   <Typography variant="subtitle2" sx={{ mb: 1 }}>
                     Fecha de Entrega
@@ -111,7 +112,8 @@ export default function NoteCreateForm() {
                     onSubmitting={isSubmitting}
                   />
                 </Grid>
-
+                */}
+                
                 <Grid xs={12} md={12} lg={12}>
                   <RHFSelect name="paymentForm" label="Forma de Pago" disabled={isSubmitting}>
                     {PAYMENT_FORM_OPTIONS.map((option) => (

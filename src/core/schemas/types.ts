@@ -10,6 +10,7 @@ import {
     type User,
     type Setting,
     Prisma,
+    SatCode,
 } from 'src/generated/prisma';
 //
 import {
@@ -32,6 +33,7 @@ import {
     UpdateSettingsSchema,
     DiagnosisHistory,
 } from 'src/core/schemas';
+import { CreateSatCodeSchema } from './sat-code-schema';
 
 // ----------------------------------------------------------------------
 
@@ -141,6 +143,11 @@ export type INoteData = {
 }
 
 //* ----------------------------------------------------------------------
+//* SAT CODE -------------------------------------------------------------
+//* ----------------------------------------------------------------------
+export type ICreateSatCodePayload = z.infer<typeof CreateSatCodeSchema>;
+
+//* ----------------------------------------------------------------------
 //* PRODUCT --------------------------------------------------------------
 //* ----------------------------------------------------------------------
 export type ICreateProductPayload = z.infer<typeof CreateProductSchema>;
@@ -152,12 +159,14 @@ export type IProductData = {
     notes: string | null;
     description: string;
     price: any;
+    satCodeId: number;
     category: {
         id: number;
         name: string;
         icon: string | null;
     };
 };
+export type ISatCodesData = SatCode;
 
 //* ----------------------------------------------------------------------
 //* CATEGORY -------------------------------------------------------------

@@ -85,6 +85,7 @@ export default function NoteEditForm({ note }: NoteEditFormProps) {
               />
             </Grid>
 
+            {/** 
             <Grid xs={12} md={4} lg={4}>
               <Typography variant="subtitle2" sx={{ mb: 1 }}>
                 Fecha de Entrega
@@ -97,7 +98,8 @@ export default function NoteEditForm({ note }: NoteEditFormProps) {
                 onSubmitting={isSubmitting}
               />
             </Grid>
-
+            */}
+            
             <Grid xs={12} md={12} lg={12}>
               <RHFSelect name="paymentForm" label="Forma de Pago" disabled={isSubmitting}>
                 {PAYMENT_FORM_OPTIONS.map((option) => (

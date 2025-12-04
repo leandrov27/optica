@@ -11,6 +11,10 @@ const ProductSchema = z.object({
         .number()
         .int()
         .positive({ error: 'Seleccione una categoría.' }),
+    satCodeId: z
+        .number()
+        .int()
+        .positive({ error: 'Seleccione una clave SAT.' }),
     code: z
         .string()
         .min(1, { error: `El código del servicio es requerido.` })

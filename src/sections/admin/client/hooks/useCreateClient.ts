@@ -49,7 +49,7 @@ export default function useCreateClient() {
             paymentMethod: 'PUE',
             address: '',
             // CLIENT DIAGNOSES INFO DATA
-            date: dayjs().format('DD-MM-YYYY'),
+            date: dayjs().format('YYYY-MM-DD'),
             leftAxis: '',
             leftSphere: '',
             leftCylinder: '',
