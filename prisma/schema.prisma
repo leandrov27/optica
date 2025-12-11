@@ -68,6 +68,7 @@ model Diagnosis {
     date          String  @map("fecha")
     rightSphere   String? @map("od_esfera") @db.VarChar(10)
     rightCylinder String? @map("od_cilindro") @db.VarChar(10)
+    add           String? @db.VarChar(10)
     di            String? @map("di") @db.VarChar(10)
     rightAxis     String? @map("od_eje") @db.VarChar(10)
     leftSphere    String? @map("oi_esfera") @db.VarChar(10)

@@ -8,6 +8,7 @@ export const CFDI_USE_OPTIONS = [
     { key: 'G03', label: 'Gastos en General' },
     { key: 'P01', label: 'Por Definir' },
     { key: 'S01', label: 'Sin Efectos Fiscales' },
+    { key: 'S02', label: 'Honorarios médicos, dentales y gastos hospitalarios' },
 ] as const;
 
 export const CFDISchema = z.enum(CFDI_USE_OPTIONS.map((cuo) => cuo.key), {

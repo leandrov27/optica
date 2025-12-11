@@ -57,6 +57,7 @@ export async function POST(request: Request) {
             leftAxis: diagnose.leftAxis || null,
             di: diagnose.di || null,
             addition: diagnose.addition || null,
+            add: diagnose.add || null,
             notes: diagnose.notes || null,
         }));
 

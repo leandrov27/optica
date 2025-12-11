@@ -35,8 +35,9 @@ const TABLE_HEAD = [
     { id: 'rightSphere', label: 'OD Esfera', align: 'center' },
     { id: 'rightCylinder', label: 'OD Cilindro', align: 'center' },
     { id: 'rightAxis', label: 'OD Eje', align: 'center' },
+    { id: 'add', label: 'ADD', align: 'center' },
     //
-    { id: 'addition', label: 'Add', align: 'center' },
+    { id: 'addition', label: 'Adición', align: 'center' },
     { id: 'notes', label: 'Notas', align: 'center' },
     //
     { id: 'actions', label: 'Operaciones', align: 'center', width: 20 },

@@ -4,12 +4,10 @@ import z from 'src/libs/zod';
 import {
     type Client,
     type Diagnosis,
-    type TaxInfo,
     type Product,
     type Category,
     type User,
     type Setting,
-    Prisma,
     SatCode,
 } from 'src/generated/prisma';
 //
@@ -61,6 +59,7 @@ export type IClientData = {
         rightAxis: string | null;
         rightSphere: string | null;
         rightCylinder: string | null;
+        add: string | null;
         addition: string | null;
         notes: string | null;
     }[];

@@ -72,11 +72,10 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
       leftAxis: f.leftAxis,
       di: f.di,
       addition: f.addition,
+      add: f.add,
       notes: f.notes,
     }))
   ), [fields]);
-
-  const { formState: { errors } } = methods;
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(sendForm)}>
@@ -323,7 +322,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                 </Typography>
               </Grid>
 
-              <Grid xs={4} md={4} lg={4}>
+              <Grid xs={3} md={3} lg={3}>
                 <RHFTextField
                   name="rightSphere"
                   label="Esfera"
@@ -332,7 +331,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                 />
               </Grid>
 
-              <Grid xs={4} md={4} lg={4}>
+              <Grid xs={3} md={3} lg={3}>
                 <RHFTextField
                   name="rightCylinder"
                   label="Cilindro"
@@ -341,10 +340,19 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                 />
               </Grid>
 
-              <Grid xs={4} md={4} lg={4}>
+              <Grid xs={3} md={3} lg={3}>
                 <RHFTextField
                   name="rightAxis"
                   label="Eje"
+                  disabled={isSubmitting}
+                  placeholder="1-180"
+                />
+              </Grid>
+
+              <Grid xs={3} md={3} lg={3}>
+                <RHFTextField
+                  name="add"
+                  label="ADD"
                   disabled={isSubmitting}
                   placeholder="1-180"
                 />

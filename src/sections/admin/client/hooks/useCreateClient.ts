@@ -58,6 +58,7 @@ export default function useCreateClient() {
             rightSphere: '',
             rightCylinder: '',
             addition: '',
+            add: '',
             notes: '',
             diagnoses: []
         },
@@ -123,6 +124,7 @@ export default function useCreateClient() {
             'rightSphere',
             'rightCylinder',
             'addition',
+            'add',
         ];
 
         fieldsToWatch.forEach((field) => {
@@ -195,6 +197,7 @@ export default function useCreateClient() {
             rightAxis: formFields.rightAxis,
             rightSphere: formFields.rightSphere,
             rightCylinder: formFields.rightCylinder,
+            add: formFields.add,
             //
             addition: formFields.addition,
             notes: formFields.notes
@@ -210,6 +213,7 @@ export default function useCreateClient() {
             'rightAxis',
             'rightSphere',
             'rightCylinder',
+            'add',
             'addition'
         ];
 
@@ -262,6 +266,7 @@ export default function useCreateClient() {
         setValue('rightAxis', '');
         setValue('rightSphere', '');
         setValue('rightCylinder', '');
+        setValue('add', '');
         //
         setValue('addition', '');
         setValue('notes', '');
@@ -290,6 +295,7 @@ export default function useCreateClient() {
         setValue('rightAxis', '');
         setValue('rightSphere', '');
         setValue('rightCylinder', '');
+        setValue('add', '');
         //
         setValue('addition', '');
         setValue('notes', '');
@@ -311,6 +317,7 @@ export default function useCreateClient() {
         setValue('rightAxis', diagnoseToEdit.rightAxis || '');
         setValue('rightSphere', diagnoseToEdit.rightSphere || '');
         setValue('rightCylinder', diagnoseToEdit.rightCylinder || '');
+        setValue('add', diagnoseToEdit.add || '');
         //
         setValue('addition', diagnoseToEdit.addition || '');
         setValue('notes', diagnoseToEdit.notes || '');

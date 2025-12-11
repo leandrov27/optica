@@ -66,6 +66,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
             leftAxis: f.leftAxis,
             di: f.di,
             addition: f.addition,
+            add: f.add,
             notes: f.notes,
         }))
     ), [fields]);
@@ -319,7 +320,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                 </Typography>
                             </Grid>
 
-                            <Grid xs={4} md={4} lg={4}>
+                            <Grid xs={3} md={3} lg={3}>
                                 <RHFTextField
                                     name="rightSphere"
                                     label="Esfera"
@@ -328,7 +329,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                 />
                             </Grid>
 
-                            <Grid xs={4} md={4} lg={4}>
+                            <Grid xs={3} md={3} lg={3}>
                                 <RHFTextField
                                     name="rightCylinder"
                                     label="Cilindro"
@@ -337,10 +338,19 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                 />
                             </Grid>
 
-                            <Grid xs={4} md={4} lg={4}>
+                            <Grid xs={3} md={3} lg={3}>
                                 <RHFTextField
                                     name="rightAxis"
                                     label="Eje"
+                                    disabled={isSubmitting}
+                                    placeholder="1-180"
+                                />
+                            </Grid>
+
+                            <Grid xs={3} md={3} lg={3}>
+                                <RHFTextField
+                                    name="add"
+                                    label="ADD"
                                     disabled={isSubmitting}
                                     placeholder="1-180"
                                 />

@@ -37,6 +37,38 @@ export default function useEditClient({ client }: useEditClientProps) {
 
     const defaultValues = useMemo<ICreateUpdateClientPayload>(() => ({
         enableTaxInfo: client.taxInfo?.rfc ? true : false,
+        firstName: client.firstName || '',
+        lastName: client.lastName || '',
+        birthDate: client.birthDate || '',
+        email: client.email || '',
+        phone: client.phone || '',
+        type: client.type || 'INDIVIDUAL',
+        observations: client.observations || '',
+        rfc: client.taxInfo?.rfc || '',
+        businessName: client.taxInfo?.businessName || '',
+        billingEmail: client.taxInfo?.billingEmail || '',
+        postalCode: client.taxInfo?.postalCode || '',
+        cfdiUse: client.taxInfo?.cfdiUse as ICFDIUse || 'G01',
+        taxRegime: client.taxInfo?.taxRegime as ITaxRegime || '601',
+        paymentMethod: client.taxInfo?.paymentMethod as IPaymentMethod || 'PUE',
+        address: client.taxInfo?.address || '',
+        date: dayjs().format('YYYY-MM-DD'),
+        leftAxis: '',
+        leftSphere: '',
+        leftCylinder: '',
+        di: '',
+        rightAxis: '',
+        rightSphere: '',
+        rightCylinder: '',
+        add: '',
+        addition: '',
+        notes: '',
+        diagnoses: [...client.diagnoses]
+    }), []);
+
+    /*
+    const defaultValues = useMemo<ICreateUpdateClientPayload>(() => ({
+        enableTaxInfo: client.taxInfo?.rfc ? true : false,
         // CLIENT PERSONAL INFO DATA
         firstName: client.firstName || '',
         lastName: client.lastName || '',
@@ -63,10 +95,11 @@ export default function useEditClient({ client }: useEditClientProps) {
         rightAxis: '',
         rightSphere: '',
         rightCylinder: '',
+        add: '',
         addition: '',
         notes: '',
         diagnoses: [...client.diagnoses]
-    }), [client]);
+    }), [client]);*/
 
     const methods = useForm({
         resolver: zodResolver(CreateUpdateClientSchema),
@@ -131,6 +164,7 @@ export default function useEditClient({ client }: useEditClientProps) {
             'rightAxis',
             'rightSphere',
             'rightCylinder',
+            'add',
             'addition',
         ];
 
@@ -155,6 +189,7 @@ export default function useEditClient({ client }: useEditClientProps) {
             rightAxis: formFields.rightAxis,
             rightSphere: formFields.rightSphere,
             rightCylinder: formFields.rightCylinder,
+            add: formFields.add,
             //
             addition: formFields.addition,
             notes: formFields.notes
@@ -170,6 +205,7 @@ export default function useEditClient({ client }: useEditClientProps) {
             'rightAxis',
             'rightSphere',
             'rightCylinder',
+            'add',
             'addition'
         ];
 
@@ -218,6 +254,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('rightAxis', '');
         setValue('rightSphere', '');
         setValue('rightCylinder', '');
+        setValue('add', '');
         //
         setValue('addition', '');
         setValue('notes', '');
@@ -295,6 +332,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('rightAxis', '');
         setValue('rightSphere', '');
         setValue('rightCylinder', '');
+        setValue('add', '');
         //
         setValue('addition', '');
         setValue('notes', '');
@@ -316,6 +354,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('rightAxis', diagnoseToEdit.rightAxis || '');
         setValue('rightSphere', diagnoseToEdit.rightSphere || '');
         setValue('rightCylinder', diagnoseToEdit.rightCylinder || '');
+        setValue('add', diagnoseToEdit.add || '');
         //
         setValue('addition', diagnoseToEdit.addition || '');
         setValue('notes', diagnoseToEdit.notes || '');

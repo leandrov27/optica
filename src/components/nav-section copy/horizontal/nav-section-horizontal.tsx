@@ -15,7 +15,8 @@ function NavSectionHorizontal({ data, config, sx, ...other }: NavSectionProps) {
     <Stack
       direction="row"
       sx={{
-        mx: 'auto',
+        width: 'max-content',
+        flexShrink: 0,
         ...hideScroll.y,
         ...sx,
       }}

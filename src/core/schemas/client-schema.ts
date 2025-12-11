@@ -27,6 +27,7 @@ export const DiagnosisHistory = z.object({
     rightCylinder: z.string().nullable(),
     rightAxis: z.string().nullable(),
     addition: z.string().nullable(),
+    add: z.string().nullable(),
     notes: z.string().nullable(),
 }).readonly();
 
@@ -143,6 +144,9 @@ const ClientSchema = z.object({
         .string()
         .trim(),
     addition: z
+        .string()
+        .trim(),
+    add: z
         .string()
         .trim(),
     notes: z
