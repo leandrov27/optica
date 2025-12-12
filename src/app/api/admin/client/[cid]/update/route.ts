@@ -126,6 +126,7 @@ export async function PUT(request: Request, { params }: { params: { cid: string 
             rightSphere: diag.rightSphere || null,
             rightCylinder: diag.rightCylinder || null,
             add: diag.add || null,
+            addi: diag.addi || null,
             addition: diag.addition || null,
             notes: diag.notes || null,
           })),

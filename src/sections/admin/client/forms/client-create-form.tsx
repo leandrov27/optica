@@ -67,6 +67,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
             di: f.di,
             addition: f.addition,
             add: f.add,
+            addi: f.addi,
             notes: f.notes,
         }))
     ), [fields]);
@@ -306,6 +307,15 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
 
                             <Grid xs={3} md={3} lg={3}>
                                 <RHFTextField
+                                    name="addi"
+                                    label="ADD-I"
+                                    disabled={isSubmitting}
+                                    placeholder="1-180"
+                                />
+                            </Grid>
+
+                            <Grid xs={3} md={3} lg={3}>
+                                <RHFTextField
                                     name="di"
                                     label="DI"
                                     disabled={isSubmitting}
@@ -350,7 +360,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                             <Grid xs={3} md={3} lg={3}>
                                 <RHFTextField
                                     name="add"
-                                    label="ADD"
+                                    label="ADD-D"
                                     disabled={isSubmitting}
                                     placeholder="1-180"
                                 />
@@ -387,7 +397,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                         float: 'inline-end'
                                     }}
                                 >
-                                    {editIndex !== null ? "Actualizar Diagnóstico" : "Agregar Diagnóstico"}
+                                    {editIndex !== null ? "Actualizar Fila" : "Agregar Fila"}
                                 </LoadingButton>
                             </Grid>
 

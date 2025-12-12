@@ -38,6 +38,7 @@ export default function DiagnosisTableRow({ row, onRemove, onEdit }: DiagnosisTa
         //
         addition,
         add,
+        addi,
         notes
     } = row;
 
@@ -64,6 +65,12 @@ export default function DiagnosisTableRow({ row, onRemove, onEdit }: DiagnosisTa
             <TableCell align="center">
                 <Label color="success">
                     {leftAxis || '-'}
+                </Label>
+            </TableCell>
+
+            <TableCell align="center">
+                <Label color="success">
+                    {addi || '-'}
                 </Label>
             </TableCell>
 

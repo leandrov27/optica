@@ -60,6 +60,7 @@ export type IClientData = {
         rightSphere: string | null;
         rightCylinder: string | null;
         add: string | null;
+        addi: string | null;
         addition: string | null;
         notes: string | null;
     }[];

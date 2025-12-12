@@ -61,6 +61,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         rightSphere: '',
         rightCylinder: '',
         add: '',
+        addi: '',
         addition: '',
         notes: '',
         diagnoses: [...client.diagnoses]
@@ -165,6 +166,7 @@ export default function useEditClient({ client }: useEditClientProps) {
             'rightSphere',
             'rightCylinder',
             'add',
+            'addi',
             'addition',
         ];
 
@@ -184,6 +186,7 @@ export default function useEditClient({ client }: useEditClientProps) {
             leftAxis: formFields.leftAxis,
             leftSphere: formFields.leftSphere,
             leftCylinder: formFields.leftCylinder,
+            addi: formFields.addi,
             di: formFields.di,
             //
             rightAxis: formFields.rightAxis,
@@ -206,6 +209,7 @@ export default function useEditClient({ client }: useEditClientProps) {
             'rightSphere',
             'rightCylinder',
             'add',
+            'addi',
             'addition'
         ];
 
@@ -249,6 +253,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('leftAxis', '');
         setValue('leftSphere', '');
         setValue('leftCylinder', '');
+        setValue('addi', '');
         setValue('di', '');
         //
         setValue('rightAxis', '');
@@ -327,6 +332,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('leftAxis', '');
         setValue('leftSphere', '');
         setValue('leftCylinder', '');
+        setValue('addi', '');
         setValue('di', '');
         //
         setValue('rightAxis', '');
@@ -349,6 +355,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         setValue('leftAxis', diagnoseToEdit.leftAxis || '');
         setValue('leftSphere', diagnoseToEdit.leftSphere || '');
         setValue('leftCylinder', diagnoseToEdit.leftCylinder || '');
+        setValue('addi', diagnoseToEdit.addi || '');
         setValue('di', diagnoseToEdit.di || '');
         //
         setValue('rightAxis', diagnoseToEdit.rightAxis || '');

@@ -30,12 +30,13 @@ const TABLE_HEAD = [
     { id: 'leftSphere', label: 'OI Esfera', align: 'center' },
     { id: 'leftCylinder', label: 'OI Cilindro', align: 'center' },
     { id: 'leftAxis', label: 'OI Eje', align: 'center' },
+    { id: 'add', label: 'ADD-I', align: 'center' },
     { id: 'di', label: 'DI', align: 'center' },
     //
     { id: 'rightSphere', label: 'OD Esfera', align: 'center' },
     { id: 'rightCylinder', label: 'OD Cilindro', align: 'center' },
     { id: 'rightAxis', label: 'OD Eje', align: 'center' },
-    { id: 'add', label: 'ADD', align: 'center' },
+    { id: 'add', label: 'ADD-D', align: 'center' },
     //
     { id: 'addition', label: 'Adición', align: 'center' },
     { id: 'notes', label: 'Notas', align: 'center' },

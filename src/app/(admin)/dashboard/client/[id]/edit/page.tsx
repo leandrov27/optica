@@ -51,6 +51,7 @@ async function getClientById(id: string): Promise<IClientData> {
                     rightSphere: true,
                     rightCylinder: true,
                     add: true,
+                    addi: true,
                     addition: true,
                     notes: true,
                 }

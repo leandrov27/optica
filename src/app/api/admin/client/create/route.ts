@@ -58,6 +58,7 @@ export async function POST(request: Request) {
             di: diagnose.di || null,
             addition: diagnose.addition || null,
             add: diagnose.add || null,
+            addi: diagnose.addi || null,
             notes: diagnose.notes || null,
         }));
 
