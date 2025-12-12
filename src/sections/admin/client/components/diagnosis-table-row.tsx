@@ -12,6 +12,8 @@ import Iconify from 'src/components/iconify';
 import { PEN_ICON, TRASH_ICON } from 'src/utils/constants';
 // schemas
 import { type IDiagnosisData } from 'src/core/schemas';
+// libs
+import { dayjs } from 'src/libs/dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +48,7 @@ export default function DiagnosisTableRow({ row, onRemove, onEdit }: DiagnosisTa
         <TableRow hover>
             <TableCell align="left">
                 <Label color="primary">
-                    {date || '-'}
+                    {dayjs(date).format('DD-MM-YYYY') || '-'}
                 </Label>
             </TableCell>
 
