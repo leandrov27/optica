@@ -97,13 +97,14 @@ model SatCode {
 }
 
 model Product {
-    id          Int     @id @default(autoincrement()) @map("id_producto")
-    categoryId  Int     @map("id_categoria")
-    satCodeId   Int     @map("id_sat_code")
-    code        String  @unique @map("codigo") @db.VarChar(50)
-    description String  @map("descripcion") @db.VarChar(255)
-    price       Decimal @map("precio") @db.Decimal(10, 2)
-    notes       String? @map("notas")
+    id          Int      @id @default(autoincrement()) @map("id_producto")
+    categoryId  Int      @map("id_categoria")
+    satCodeId   Int      @map("id_sat_code")
+    code        String   @unique @map("codigo") @db.VarChar(50)
+    description String   @map("descripcion") @db.VarChar(255)
+    price       Decimal  @map("precio") @db.Decimal(10, 2)
+    notes       String?  @map("notas")
+    createdAt   DateTime @default(now()) @map("creado_en")
 
     // Relations
     noteDetails NoteDetail[]
