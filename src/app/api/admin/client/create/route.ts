@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 // libs
 import db from "src/libs/prisma";
+import { dayjs } from "src/libs/dayjs";
 // utils
 import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     try {
-        const data: ICreateUpdateClientPayload = await request.json();
+        const data: any = await request.json();
         const validationSchema = CreateUpdateClientSchema.safeParse(data);
 
         if (!validationSchema.success) {
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
         };
 
         const diagnosesData = parsed.diagnoses.map(diagnose => ({
-            date: diagnose.date ? diagnose.date : '',
+            date: dayjs(diagnose.date).toDate(),
             rightSphere: diagnose.rightSphere || null,
             rightCylinder: diagnose.rightCylinder || null,
             rightAxis: diagnose.rightAxis || null,

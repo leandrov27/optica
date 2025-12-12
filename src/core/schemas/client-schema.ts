@@ -18,7 +18,7 @@ const rfcBaseRegex = /^([A-ZÑ&]{3,4})([0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0
 
 export const DiagnosisHistory = z.object({
     diagnosisId: z.number().int().optional(),
-    date: z.string().nullable(),
+    date: z.any().nullable(),
     leftSphere: z.string().nullable(),
     leftCylinder: z.string().nullable(),
     leftAxis: z.string().nullable(),
@@ -119,9 +119,9 @@ const ClientSchema = z.object({
     //~ DIAGNOSIS INFO
     //~ --------------
     date: z
-        .string()
-        .or(z.literal(''))
-        .transform((val) => (val === '' ? null : val))
+        .any()
+        //.or(z.literal(''))
+        //.transform((val) => (val === '' ? null : val))
         .nullable(),
     leftAxis: z
         .string()
