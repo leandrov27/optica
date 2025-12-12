@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 // libs
 import db from "src/libs/prisma";
+import { dayjs } from "src/libs/dayjs";
 // utils
 import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
@@ -117,7 +118,7 @@ export async function PUT(request: Request, { params }: { params: { cid: string 
         await tx.diagnosis.createMany({
           data: parsed.diagnoses.map((diag) => ({
             clientId: cid,
-            date: diag.date || '',
+            date: diag.date ? dayjs(diag.date).toDate() : new Date(),
             leftAxis: diag.leftAxis || null,
             leftSphere: diag.leftSphere || null,
             leftCylinder: diag.leftCylinder || null,
