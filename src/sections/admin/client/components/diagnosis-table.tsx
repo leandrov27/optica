@@ -17,7 +17,7 @@ import DiagnosisTableRow from "./diagnosis-table-row";
 // ----------------------------------------------------------------------
 
 interface DiagnosisTableProps {
-    diagnoses: IDiagnosisData[];
+    diagnoses: any[];
     onRemove: (index: number) => void;
     onEdit: (index: number) => void;
 }
