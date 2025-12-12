@@ -264,7 +264,8 @@ export default function useCreateClient() {
         }
 
         // Limpia campos del formulario
-        setValue('date', '');
+        //setValue('date', '');
+        setValue('date', dayjs().format('YYYY-MM-DD'))
         //
         setValue('leftAxis', '');
         setValue('leftSphere', '');
@@ -294,7 +295,8 @@ export default function useCreateClient() {
             });
         }
 
-        setValue('date', '');
+        //setValue('date', '');
+        setValue('date', dayjs().format('YYYY-MM-DD'))
         //
         setValue('leftAxis', '');
         setValue('leftSphere', '');

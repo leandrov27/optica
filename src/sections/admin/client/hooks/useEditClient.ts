@@ -252,7 +252,8 @@ export default function useEditClient({ client }: useEditClientProps) {
         }
 
         // ✅ Limpiar campos
-        setValue('date', '');
+        //setValue('date', '');
+        setValue('date', dayjs().format('YYYY-MM-DD'))
         //
         setValue('leftAxis', '');
         setValue('leftSphere', '');
@@ -331,7 +332,8 @@ export default function useEditClient({ client }: useEditClientProps) {
             });
         }
 
-        setValue('date', '');
+        //setValue('date', '');
+        setValue('date', dayjs().format('YYYY-MM-DD'))
         //
         setValue('leftAxis', '');
         setValue('leftSphere', '');
