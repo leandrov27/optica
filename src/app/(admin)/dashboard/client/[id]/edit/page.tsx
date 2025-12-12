@@ -15,7 +15,7 @@ export const metadata = {
 
 // ----------------------------------------------------------------------
 
-async function getClientById(id: string): Promise<IClientData> {
+async function getClientById(id: string): Promise<any> {
     const clientById = await db.client.findUnique({
         where: { id: Number(id) },
         select: {

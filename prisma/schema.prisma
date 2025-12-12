@@ -77,7 +77,7 @@ model Diagnosis {
     leftAxis      String?  @map("oi_eje") @db.VarChar(10)
     addition      String?  @map("adicion") @db.VarChar(10)
     notes         String?  @map("notas")
-    createdAt     DateTime @default(now()) @map("creado_en") @db.DateTime(0)
+    createdAt     DateTime @default(now()) @map("creado_en")
 
     // Relation
     client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
