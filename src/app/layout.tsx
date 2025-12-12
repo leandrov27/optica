@@ -74,7 +74,12 @@ export default function RootLayout({ children }: Props) {
               <ThemeProvider>
                 <MotionLazy>
                   <SettingsDrawer />
-                  <Toaster />
+                  <Toaster 
+                    position='top-center' 
+                    toastOptions={{
+                      duration: 1000
+                    }}
+                  />
                   <AuthConsumer>
                     {children}
                   </AuthConsumer>

@@ -113,20 +113,6 @@ export default function NoteCreateForm() {
                   />
                 </Grid>
                 */}
-                
-                <Grid xs={12} md={12} lg={12}>
-                  <RHFSelect name="paymentForm" label="Forma de Pago" disabled={isSubmitting}>
-                    {PAYMENT_FORM_OPTIONS.map((option) => (
-                      <MenuItem key={option.key} value={option.key}>
-                        {option.key} - {option.label}
-                      </MenuItem>
-                    ))}
-                  </RHFSelect>
-                </Grid>
-
-                <Grid xs={12} md={12} lg={12}>
-                  <RHFTextField multiline minRows={3} name="notes" label="Notas" disabled={isSubmitting} />
-                </Grid>
               </Grid>
 
               <Grid xs={12} md={12} lg={12}>
@@ -224,6 +210,20 @@ export default function NoteCreateForm() {
                     </Grid>
                   </>
                 )}
+              </Grid>
+
+              <Grid xs={12} md={12} lg={12}>
+                <RHFTextField multiline minRows={3} name="notes" label="Notas" disabled={isSubmitting} />
+              </Grid>
+
+              <Grid xs={12} md={12} lg={12}>
+                <RHFSelect name="paymentForm" label="Forma de Pago" disabled={isSubmitting}>
+                  {PAYMENT_FORM_OPTIONS.map((option) => (
+                    <MenuItem key={option.key} value={option.key}>
+                      {option.key} - {option.label}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
               </Grid>
 
               <Stack sx={{ mt: 4 }} direction="row" spacing={2} justifyContent="flex-end">
