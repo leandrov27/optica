@@ -266,13 +266,23 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
 
               <Grid xs={4} md={2} lg={6}>
                 <RHFTextField
+                  name="di"
+                  label="DI"
+                  disabled={isSubmitting}
+                  placeholder=""
+                />
+              </Grid>
+
+              {/** 
+              <Grid xs={4} md={2} lg={6}>
+                <RHFTextField
                   name="addition"
                   label="Adición"
                   disabled={isSubmitting}
                   placeholder="ej. +2.00"
                 />
               </Grid>
-
+*/}
               {/* Sección Ojo Izquierdo */}
               <Grid xs={12}>
                 <Typography variant="subtitle1">
@@ -313,15 +323,6 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                   label="ADD-I"
                   disabled={isSubmitting}
                   placeholder="1-180"
-                />
-              </Grid>
-
-              <Grid xs={3} md={3} lg={3}>
-                <RHFTextField
-                  name="di"
-                  label="DI"
-                  disabled={isSubmitting}
-                  placeholder=""
                 />
               </Grid>
 

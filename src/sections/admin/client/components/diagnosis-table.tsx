@@ -38,7 +38,7 @@ const TABLE_HEAD = [
     { id: 'rightAxis', label: 'OD Eje', align: 'center' },
     { id: 'add', label: 'ADD-D', align: 'center' },
     //
-    { id: 'addition', label: 'Adición', align: 'center' },
+    {/* id: 'addition', label: 'Adición', align: 'center' */},
     { id: 'notes', label: 'Notas', align: 'center' },
     //
     { id: 'actions', label: 'Operaciones', align: 'center', width: 20 },

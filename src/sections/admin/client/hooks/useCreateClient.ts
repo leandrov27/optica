@@ -206,6 +206,8 @@ export default function useCreateClient() {
             notes: formFields.notes
         };
 
+        /*
+
         // ✅ Campos requeridos (excepto notes)
         const requiredFields: (keyof IDiagnosisItem)[] = [
             'date',
@@ -242,6 +244,8 @@ export default function useCreateClient() {
             toast.error('Completa los campos del diagnóstico primero');
             return;
         }
+
+        */
 
         // ✅ Si pasa la validación:
         if (editIndex !== null) {
