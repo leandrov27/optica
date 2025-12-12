@@ -71,7 +71,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
       leftCylinder: f.leftCylinder,
       leftAxis: f.leftAxis,
       di: f.di,
-      addition: f.addition,
+      addition: null,
       add: f.add,
       addi: f.addi,
       notes: f.notes,
