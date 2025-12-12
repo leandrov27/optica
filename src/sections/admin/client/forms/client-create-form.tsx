@@ -401,7 +401,7 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                                         float: 'inline-end'
                                     }}
                                 >
-                                    {editIndex !== null ? "Actualizar Fila" : "Agregar Fila"}
+                                    {editIndex !== null ? "Actualizar Diagnóstico" : "Agregar Diagnóstico"}
                                 </LoadingButton>
                             </Grid>
 

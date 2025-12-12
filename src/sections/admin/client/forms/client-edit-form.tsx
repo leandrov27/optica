@@ -400,7 +400,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                     float: 'inline-end'
                   }}
                 >
-                  {editIndex !== null ? "Actualizar Fila" : "Agregar Fila"}
+                  {editIndex !== null ? "Actualizar Diagnóstico" : "Agregar Diagnóstico"}
                 </LoadingButton>
               </Grid>
             </Grid>

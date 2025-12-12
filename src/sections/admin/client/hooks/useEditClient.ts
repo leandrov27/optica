@@ -198,6 +198,8 @@ export default function useEditClient({ client }: useEditClientProps) {
             notes: formFields.notes
         };
 
+        /*
+
         // ✅ VALIDACIÓN: campos obligatorios (excepto notes)
         const requiredFields = [
             'date',
@@ -231,6 +233,8 @@ export default function useEditClient({ client }: useEditClientProps) {
             return;
         }
 
+        */
+       
         // ✅ AGREGAR o ACTUALIZAR diagnóstico
         if (editIndex !== null) {
             const updatedFields = [...fields];
