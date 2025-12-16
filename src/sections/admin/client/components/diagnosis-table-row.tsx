@@ -53,31 +53,7 @@ export default function DiagnosisTableRow({ row, onRemove, onEdit }: DiagnosisTa
             </TableCell>
 
             <TableCell align="center">
-                <Label color="success">
-                    {leftSphere || '-'}
-                </Label>
-            </TableCell>
-
-            <TableCell align="center">
-                <Label color="success">
-                    {leftCylinder || '-'}
-                </Label>
-            </TableCell>
-
-            <TableCell align="center">
-                <Label color="success">
-                    {leftAxis || '-'}
-                </Label>
-            </TableCell>
-
-            <TableCell align="center">
-                <Label color="success">
-                    {addi || '-'}
-                </Label>
-            </TableCell>
-
-            <TableCell align="center">
-                <Label color="success">
+                <Label color="secondary">
                     {di || '-'}
                 </Label>
             </TableCell>
@@ -101,16 +77,42 @@ export default function DiagnosisTableRow({ row, onRemove, onEdit }: DiagnosisTa
             </TableCell>
 
             <TableCell align="center">
-                <Label color="secondary">
+                <Label color="info">
                     {add || '-'}
                 </Label>
             </TableCell>
 
             <TableCell align="center">
+                <Label color="success">
+                    {leftSphere || '-'}
+                </Label>
+            </TableCell>
+
+            <TableCell align="center">
+                <Label color="success">
+                    {leftCylinder || '-'}
+                </Label>
+            </TableCell>
+
+            <TableCell align="center">
+                <Label color="success">
+                    {leftAxis || '-'}
+                </Label>
+            </TableCell>
+
+            <TableCell align="center">
+                <Label color="success">
+                    {addi || '-'}
+                </Label>
+            </TableCell>
+
+            {/** 
+            <TableCell align="center">
                 <Label color="secondary">
                     {addition || '-'}
                 </Label>
             </TableCell>
+            */}
 
             <TableCell align="center">
                 <Label color="secondary">
@@ -119,7 +121,7 @@ export default function DiagnosisTableRow({ row, onRemove, onEdit }: DiagnosisTa
             </TableCell>
 
             <TableCell align="center">
-                <Stack direction="row" gap={1} sx={{ ml: 1 }}>
+                <Stack direction="row" gap={1} sx={{ ml: 0 }}>
                     <IconButton
                         color="primary"
                         size="small"

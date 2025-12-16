@@ -283,48 +283,6 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                 />
               </Grid>
 */}
-              {/* Sección Ojo Izquierdo */}
-              <Grid xs={12}>
-                <Typography variant="subtitle1">
-                  Ojo Izquierdo (OI)
-                </Typography>
-              </Grid>
-
-              <Grid xs={3} md={3} lg={3}>
-                <RHFTextField
-                  name="leftSphere"
-                  label="Esfera"
-                  disabled={isSubmitting}
-                  placeholder="ej. -1.25"
-                />
-              </Grid>
-
-              <Grid xs={3} md={3} lg={3}>
-                <RHFTextField
-                  name="leftCylinder"
-                  label="Cilindro"
-                  disabled={isSubmitting}
-                  placeholder="ej. -0.50"
-                />
-              </Grid>
-
-              <Grid xs={3} md={3} lg={3}>
-                <RHFTextField
-                  name="leftAxis"
-                  label="Eje"
-                  disabled={isSubmitting}
-                  placeholder="1-180"
-                />
-              </Grid>
-
-              <Grid xs={3} md={3} lg={3}>
-                <RHFTextField
-                  name="addi"
-                  label="ADD-I"
-                  disabled={isSubmitting}
-                  placeholder="1-180"
-                />
-              </Grid>
 
               {/* Sección Ojo Derecho */}
               <Grid xs={12}>
@@ -364,6 +322,49 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
                 <RHFTextField
                   name="add"
                   label="ADD-D"
+                  disabled={isSubmitting}
+                  placeholder="1-180"
+                />
+              </Grid>
+
+              {/* Sección Ojo Izquierdo */}
+              <Grid xs={12}>
+                <Typography variant="subtitle1">
+                  Ojo Izquierdo (OI)
+                </Typography>
+              </Grid>
+
+              <Grid xs={3} md={3} lg={3}>
+                <RHFTextField
+                  name="leftSphere"
+                  label="Esfera"
+                  disabled={isSubmitting}
+                  placeholder="ej. -1.25"
+                />
+              </Grid>
+
+              <Grid xs={3} md={3} lg={3}>
+                <RHFTextField
+                  name="leftCylinder"
+                  label="Cilindro"
+                  disabled={isSubmitting}
+                  placeholder="ej. -0.50"
+                />
+              </Grid>
+
+              <Grid xs={3} md={3} lg={3}>
+                <RHFTextField
+                  name="leftAxis"
+                  label="Eje"
+                  disabled={isSubmitting}
+                  placeholder="1-180"
+                />
+              </Grid>
+
+              <Grid xs={3} md={3} lg={3}>
+                <RHFTextField
+                  name="addi"
+                  label="ADD-I"
                   disabled={isSubmitting}
                   placeholder="1-180"
                 />
