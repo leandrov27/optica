@@ -54,9 +54,7 @@ export async function PUT(request: Request, { params }: { params: { cid: string 
     }
 
     const clientData = {
-      firstName: parsed.firstName,
-      lastName: parsed.lastName,
-      displayName: `${parsed.firstName} ${parsed.lastName}`,
+      displayName: parsed.displayName,
       birthDate: parsed.birthDate,
       email: parsed.email,
       phone: parsed.phone,
@@ -67,7 +65,7 @@ export async function PUT(request: Request, { params }: { params: { cid: string 
     let taxInfoData = {};
 
     if (parsed.enableTaxInfo) {
-      const businessName = parsed.businessName || `${parsed.firstName} ${parsed.lastName}`;
+      const businessName = parsed.businessName || parsed.displayName;
       if (existingClient.taxInfo) {
         taxInfoData = {
           taxInfo: {

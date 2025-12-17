@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     try {
-        const data: any = await request.json();
+        const data: ICreateUpdateClientPayload = await request.json();
         const validationSchema = CreateUpdateClientSchema.safeParse(data);
 
         if (!validationSchema.success) {
@@ -38,9 +38,7 @@ export async function POST(request: Request) {
         const parsed = validationSchema.data;
 
         const clientData = {
-            firstName: parsed.firstName,
-            lastName: parsed.lastName,
-            displayName: `${parsed.firstName} ${parsed.lastName}`,
+            displayName: parsed.displayName,
             birthDate: parsed.birthDate,
             email: parsed.email,
             phone: parsed.phone,
@@ -64,7 +62,7 @@ export async function POST(request: Request) {
         }));
 
         if (parsed.enableTaxInfo) {
-            const businessName = parsed.businessName || `${parsed.firstName} ${parsed.lastName}`;
+            const businessName = parsed.businessName || parsed.displayName;
 
             await db.client.create({
                 data: {

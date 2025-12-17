@@ -18,6 +18,8 @@ import {
     UpdateNoteSchema,
     NoteDetailSchema,
     //
+    CreatePaymentSchema,
+    //
     CreateProductSchema,
     UpdateProductSchema,
     //
@@ -30,6 +32,8 @@ import {
     //
     UpdateSettingsSchema,
     DiagnosisHistory,
+    type ICreditStatus,
+
 } from 'src/core/schemas';
 import { CreateSatCodeSchema } from './sat-code-schema';
 
@@ -43,8 +47,6 @@ export type IClientRaw = Pick<Client, 'id' | 'displayName' | 'phone' | 'type'>;
 export type IClientData = {
     type: 'INDIVIDUAL' | 'BUSINESS';
     id: number;
-    firstName: string;
-    lastName: string;
     displayName: string;
     birthDate: string | null;
     email: string | null;
@@ -74,7 +76,44 @@ export type IClientData = {
         paymentMethod: string | null;
         address: string | null;
     } | null;
+    saleNotes: {
+        id: number;
+        folio: string | null;
+        date: Date;
+        subtotal: number;
+        total: number;
+        creditStatus: ICreditStatus;
+        payments: {
+            id: number;
+            amount: number;
+            paymentMethod: string;
+            paymentDate: Date;
+            reference: string | null;
+        }[];
+    }[];
 };
+
+// Tipo para las props del componente ClientEditView
+export type IClientEditViewProps = {
+    client: IClientData;
+    // Props para la tabla de saleNotes
+    saleNotesCurrentPage: number;
+    saleNotesTotalPages: number;
+    saleNotesFrom: number;
+    saleNotesTo: number;
+    saleNotesTotalCount: number;
+    // Props para la tabla de payments
+    paymentsCurrentPage: number;
+    paymentsTotalPages: number;
+    paymentsFrom: number;
+    paymentsTo: number;
+    paymentsTotalCount: number;
+};
+
+//* ----------------------------------------------------------------------
+//* PAYMENT --------------------------------------------------------------
+//* ----------------------------------------------------------------------
+export type ICreatePaymentPayload = z.infer<typeof CreatePaymentSchema>;
 
 //* ----------------------------------------------------------------------
 //* DIAGNOSIS ------------------------------------------------------------
@@ -122,6 +161,7 @@ export type INoteByID = {
         productId: number;
         quantity: number;
         unitPrice: number;
+        finalPrice: number;
         discountPct: number;
         amount: number;
         noteId?: number | undefined;
@@ -142,6 +182,37 @@ export type INoteData = {
     total: any;
 }
 
+export type IClientCreditNoteData = {
+    id: number;
+    folio: string | null;
+    date: Date;
+    subtotal: number;
+    total: number;
+    creditStatus: ICreditStatus;
+    payments: {
+        id: number;
+        amount: number;
+        paymentMethod: string;
+        paymentDate: Date;
+        reference: string | null;
+    }[];
+    // Campos calculados
+    totalPayments: number; // Suma de todos los pagos
+    pendingBalance: number; // total - totalPayments
+    client: {
+        id: number;
+        displayName: string;
+    };
+};
+export type IClientPaymentData = {
+    id: number;
+    amount: number;
+    paymentMethod: string;
+    paymentDate: Date;
+    reference: string | null;
+    saleNoteFolio: string | null;
+};
+
 //* ----------------------------------------------------------------------
 //* SAT CODE -------------------------------------------------------------
 //* ----------------------------------------------------------------------
@@ -155,7 +226,7 @@ export type IUpdateProductPayload = z.infer<typeof UpdateProductSchema>;
 export type IProductRaw = Omit<Product, 'createdAt'>;
 export type IProductData = {
     id: number;
-    code: string;
+    code: string | null;
     notes: string | null;
     description: string;
     price: any;

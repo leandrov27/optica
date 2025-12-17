@@ -78,6 +78,7 @@ export async function POST(request: Request) {
                         productId: detail.productId,
                         quantity: detail.quantity,
                         unitPrice: new Decimal(detail.unitPrice),
+                        finalPrice: new Decimal(detail.finalPrice),
                         discountPct: new Decimal(detail.discountPct ?? 0),
                         amount: new Decimal(detail.amount),
                     })),

@@ -25,7 +25,7 @@ interface NoteTableProps {
     discountPct?: string | number | undefined;
   }[];
   onRemove: (index: number) => void;
-  onDetailChange: (index: number, field: 'quantity' | 'discountPct', value: string) => void;
+  onDetailChange: (index: number, field: 'quantity' | 'discountPct' | 'finalPrice', value: string) => void;
   onSubmitting: boolean;
 }
 
@@ -35,7 +35,8 @@ const TABLE_HEAD = [
   { id: 'id', label: 'ID', align: 'center' },
   //
   { id: 'description', label: 'Descripción', align: 'center' },
-  { id: 'price', label: 'Precio', align: 'center' },
+  { id: 'price', label: 'Precio Original', align: 'center' },
+  { id: 'finalPrice', label: 'Precio Final', align: 'center' },
   { id: 'qty', label: 'Cantidad', align: 'center' },
   { id: 'discount', label: 'Descuento (%)', align: 'center' },
   { id: 'amount', label: 'Importe', align: 'center' },

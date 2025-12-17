@@ -15,6 +15,7 @@ import {
 // ----------------------------------------------------------------------
 
 const rfcBaseRegex = /^([A-ZÑ&]{3,4})([0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01]))([A-Z\d]{2})([A\d])$/;
+const RFC_GENERIC = 'XAXX010101000';
 
 export const DiagnosisHistory = z.object({
     diagnosisId: z.number().int().optional(),
@@ -41,20 +42,12 @@ const ClientSchema = z.object({
     id: z
         .int()
         .positive(),
-    firstName: z
-        .string()
-        .min(3, { error: "El nombre debe tener al menos 3 caracteres" })
-        .max(100, { error: "El nombre no debe exceder los 100 caracteres" })
-        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, { error: 'El nombre solo puede contener letras y espacios' })
-        .transform((value) => capitalizeString(value)),
-    lastName: z
-        .string()
-        .min(4, { error: "El apellido debe tener al menos 4 caracteres" })
-        .max(100, { error: "El apellido no debe exceder los 100 caracteres" })
-        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, { error: 'El apellido solo puede contener letras y espacios' })
-        .transform((value) => capitalizeString(value)),
     displayName: z
         .string()
+        .min(1, { error: "El nombre y apellido es requerido" })
+        .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, {
+            message: 'El nombre y apellido solo puede contener letras y espacios',
+        })
         .transform((value) => capitalizeString(value)),
     birthDate: z
         .string().refine((val) => dayjs(val, 'YYYY-MM-DD', true).isValid(), { error: 'Formato de fecha no válido (Se espera: YYYY-MM-DD)' })
@@ -120,8 +113,6 @@ const ClientSchema = z.object({
     //~ --------------
     date: z
         .any()
-        //.or(z.literal(''))
-        //.transform((val) => (val === '' ? null : val))
         .nullable(),
     leftAxis: z
         .string()
@@ -161,9 +152,10 @@ const ClientSchema = z.object({
         .array(DiagnosisHistory)
 });
 
+
 // ----------------------------------------------------------------------
 
-export const CreateUpdateClientSchema = ClientSchema.omit({ id: true, displayName: true }).extend({
+export const CreateUpdateClientSchema = ClientSchema.omit({ id: true }).extend({
     enableTaxInfo: z.boolean().default(false)
 }).check((ctx) => {
     const { value, issues } = ctx;
@@ -184,31 +176,33 @@ export const CreateUpdateClientSchema = ClientSchema.omit({ id: true, displayNam
     }
 
     if (rfc) {
-        if (type === 'INDIVIDUAL' && rfc.length !== 13) {
-            issues.push({
-                code: 'custom',
-                path: ['rfc'],
-                message: 'El RFC de una persona física debe tener exactamente 13 caracteres',
-                input: [rfc]
-            });
-        }
+        if (rfc !== RFC_GENERIC) {
+            if (type === 'INDIVIDUAL' && rfc.length !== 13) {
+                issues.push({
+                    code: 'custom',
+                    path: ['rfc'],
+                    message: 'El RFC de una persona física debe tener exactamente 13 caracteres',
+                    input: [rfc],
+                });
+            }
 
-        if (type === 'BUSINESS' && rfc.length !== 12) {
-            issues.push({
-                code: 'custom',
-                path: ['rfc'],
-                message: 'El RFC de una persona moral debe tener exactamente 12 caracteres',
-                input: [rfc]
-            });
-        }
+            if (type === 'BUSINESS' && rfc.length !== 12) {
+                issues.push({
+                    code: 'custom',
+                    path: ['rfc'],
+                    message: 'El RFC de una persona moral debe tener exactamente 12 caracteres',
+                    input: [rfc],
+                });
+            }
 
-        if (!rfcBaseRegex.test(rfc)) {
-            issues.push({
-                code: 'custom',
-                path: ['rfc'],
-                message: 'El RFC no tiene un formato válido para el tipo de cliente seleccionado',
-                input: [rfc]
-            });
+            if (!rfcBaseRegex.test(rfc)) {
+                issues.push({
+                    code: 'custom',
+                    path: ['rfc'],
+                    message: 'El RFC no tiene un formato válido',
+                    input: [rfc],
+                });
+            }
         }
     }
 

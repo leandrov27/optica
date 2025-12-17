@@ -32,8 +32,7 @@ export default function useCreateClient() {
         defaultValues: {
             enableTaxInfo: false,
             // CLIENT PERSONAL INFO DATA
-            firstName: '',
-            lastName: '',
+            displayName: '',
             birthDate: '',
             email: '',
             phone: '',
@@ -136,56 +135,6 @@ export default function useCreateClient() {
             }
         });
     }, [formFields, clearErrors]);
-
-    // -- ADD DIAGNOSE TO TABLE --
-    /*
-    const addDiagnoseItem = useCallback(() => {
-        const newDiagnosisItem: IDiagnosisItem = {
-            date: formFields.date,
-            //
-            leftAxis: formFields.leftAxis,
-            leftSphere: formFields.leftSphere,
-            leftCylinder: formFields.leftCylinder,
-            di: formFields.di,
-            //
-            rightAxis: formFields.rightAxis,
-            rightSphere: formFields.rightSphere,
-            rightCylinder: formFields.rightCylinder,
-            //
-            addition: formFields.addition,
-            notes: formFields.notes
-        }
-
-        if (editIndex !== null) {
-            const updatedFields = [...fields];
-            updatedFields[editIndex] = newDiagnosisItem as any;
-            replace(updatedFields);
-            setEditIndex(null);
-            toast.success('Diagnóstico actualizado', {
-                description: "El diagnóstico seleccionado se ha actualizado",
-            });
-
-        } else {
-            append(newDiagnosisItem);
-            toast.success('Diagnóstico agregado', {
-                description: "El diagnóstico se ha agregado a la lista",
-            });
-        }
-
-        setValue('date', '');
-        //
-        setValue('leftAxis', '');
-        setValue('leftSphere', '');
-        setValue('leftCylinder', '');
-        setValue('di', '');
-        //
-        setValue('rightAxis', '');
-        setValue('rightSphere', '');
-        setValue('rightCylinder', '');
-        //
-        setValue('addition', '');
-        setValue('notes', '');
-    }, [append, fields, setValue, replace, editIndex, formFields]);*/
 
     const addDiagnoseItem = useCallback(() => {
         const newDiagnosisItem: IDiagnosisItem = {

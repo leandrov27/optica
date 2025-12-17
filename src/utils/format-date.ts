@@ -7,6 +7,11 @@ export function formatDate(date: Date | string): string {
     return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 }
 
+export function formatDateWithTime(date: Date | string): string {
+    const formattedDateWithTime = dayjs(date).format('ddd DD MMM, YYYY [a las] HH:mm a');
+    return formattedDateWithTime;
+}
+
 export function getTodayLocal(): string {
     return dayjs().startOf('day').format('YYYY-MM-DD');
 }

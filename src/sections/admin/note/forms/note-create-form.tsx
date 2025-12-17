@@ -31,7 +31,6 @@ import useCreateNote from '../hooks/useCreateNote';
 import NoteTable from "../components/note-table";
 import ClientAutocomplete from '../widgets/client-autocomplete';
 import ProductAutocomplete from '../widgets/product-autocomplete';
-import DatePicker from '../widgets/date-picker';
 import ClientCreateDialog from "../../client/forms/client-create-dialog";
 import ProductNewEditDialog from "../../product/forms/product-new-edit-dialog";
 

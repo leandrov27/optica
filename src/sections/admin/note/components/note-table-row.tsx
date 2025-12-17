@@ -27,7 +27,7 @@ interface NoteTableRowProps {
   };
   index: number;
   onRemove: VoidFunction;
-  onDetailChange: (index: number, field: 'quantity' | 'discountPct', value: string) => void;
+  onDetailChange: (index: number, field: 'finalPrice' | 'quantity' | 'discountPct', value: string) => void;
   onSubmitting: boolean;
 }
 
@@ -61,6 +61,18 @@ export default function NoteTableRow({ row, index, onRemove, onDetailChange, onS
           <Label color="secondary">
             {settings?.currencySymbol} {unitPrice ?? '-'}
           </Label>
+        </TableCell>
+
+        <TableCell align="center">
+          <RHFTextField
+            sx={{ width: 80 }}
+            name={`noteDetails.${index}.finalPrice`}
+            disabled={onSubmitting}
+            type="number"
+            onChange={(e) =>
+              onDetailChange(index, 'finalPrice', e.target.value)
+            }
+          />
         </TableCell>
 
         <TableCell align="center">

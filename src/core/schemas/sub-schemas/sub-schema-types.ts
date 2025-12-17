@@ -7,6 +7,7 @@ import { TaxRegimeSchema } from './tax-regime-schema';
 import { CFDISchema } from './cfdi-schema';
 import { PaymentMethodSchema } from './payment-method-schema';
 import { PaymentFormSchema } from './payment-form-schema';
+import { CreditStatusSchema } from './credit-status-schema';
 
 // ----------------------------------------------------------------------
 
@@ -21,3 +22,5 @@ export type IType = z.infer<typeof TypeSchema>;
 export type ITaxRegime = z.infer<typeof TaxRegimeSchema>;
 
 export type ICFDIUse = z.infer<typeof CFDISchema>;
+
+export type ICreditStatus = z.infer<typeof CreditStatusSchema>;

@@ -231,6 +231,9 @@ export default function NotePDF({
               <Text style={styles.subtitle2}>P. Unit.</Text>
             </View>
             <View style={styles.tableCell_4}>
+              <Text style={styles.subtitle2}>P. Final</Text>
+            </View>
+            <View style={styles.tableCell_4}>
               <Text style={styles.subtitle2}>Cant.</Text>
             </View>
             <View style={styles.tableCell_4}>
@@ -253,6 +256,11 @@ export default function NotePDF({
               <View style={styles.tableCell_4}>
                 <Text>
                   {currencySymbol} {item.unitPrice}
+                </Text>
+              </View>
+              <View style={styles.tableCell_4}>
+                <Text>
+                  {currencySymbol} {item.finalPrice}
                 </Text>
               </View>
               <View style={styles.tableCell_4}>

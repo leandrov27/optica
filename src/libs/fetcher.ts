@@ -33,6 +33,9 @@ export const API_ENDPOINTS = {
       search_client: (query: string) => `${ROOTS_API.admin}/note/search-client?q=${encodeURIComponent(query)}`,
       search_product: (query: string) => `${ROOTS_API.admin}/note/search-product?q=${encodeURIComponent(query)}`,
     },
+    payment: {
+      create: `${ROOTS_API.admin}/payment/create`,
+    },
     sat: {
       create: `${ROOTS_API.admin}/sat/create`,
     },

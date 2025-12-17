@@ -5,6 +5,8 @@ import z from 'src/libs/zod';
 
 export const PAYMENT_FORM_OPTIONS = [
     { key: '01', label: 'Efectivo' },
+    { key: '02', label: 'Cheques' },
+    { key: '02', label: 'Crédito' },
     { key: '03', label: 'Transferencia' },
     { key: '04', label: 'Transferencia NF' },
     { key: '05', label: 'Tarjeta de Crédito' },

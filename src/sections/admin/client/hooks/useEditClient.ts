@@ -37,8 +37,7 @@ export default function useEditClient({ client }: useEditClientProps) {
 
     const defaultValues = useMemo<ICreateUpdateClientPayload>(() => ({
         enableTaxInfo: client.taxInfo?.rfc ? true : false,
-        firstName: client.firstName || '',
-        lastName: client.lastName || '',
+        displayName: client.displayName || '',
         birthDate: client.birthDate || '',
         email: client.email || '',
         phone: client.phone || '',
@@ -66,41 +65,6 @@ export default function useEditClient({ client }: useEditClientProps) {
         notes: '',
         diagnoses: [...client.diagnoses]
     }), []);
-
-    /*
-    const defaultValues = useMemo<ICreateUpdateClientPayload>(() => ({
-        enableTaxInfo: client.taxInfo?.rfc ? true : false,
-        // CLIENT PERSONAL INFO DATA
-        firstName: client.firstName || '',
-        lastName: client.lastName || '',
-        birthDate: client.birthDate || '',
-        email: client.email || '',
-        phone: client.phone || '',
-        type: client.type || 'INDIVIDUAL',
-        observations: client.observations || '',
-        // CLIENT TAX INFO DATA
-        rfc: client.taxInfo?.rfc || '',
-        businessName: client.taxInfo?.businessName || '',
-        billingEmail: client.taxInfo?.billingEmail || '',
-        postalCode: client.taxInfo?.postalCode || '',
-        cfdiUse: client.taxInfo?.cfdiUse as ICFDIUse || 'G01',
-        taxRegime: client.taxInfo?.taxRegime as ITaxRegime || '601',
-        paymentMethod: client.taxInfo?.paymentMethod as IPaymentMethod || 'PUE',
-        address: client.taxInfo?.address || '',
-        // CLIENT DIAGNOSES INFO DATA
-        date: dayjs().format('YYYY-MM-DD'),
-        leftAxis: '',
-        leftSphere: '',
-        leftCylinder: '',
-        di: '',
-        rightAxis: '',
-        rightSphere: '',
-        rightCylinder: '',
-        add: '',
-        addition: '',
-        notes: '',
-        diagnoses: [...client.diagnoses]
-    }), [client]);*/
 
     const methods = useForm({
         resolver: zodResolver(CreateUpdateClientSchema),
@@ -234,7 +198,7 @@ export default function useEditClient({ client }: useEditClientProps) {
         }
 
         */
-       
+
         // ✅ AGREGAR o ACTUALIZAR diagnóstico
         if (editIndex !== null) {
             const updatedFields = [...fields];

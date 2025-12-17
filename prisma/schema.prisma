@@ -1,5 +1,5 @@
 generator client {
-    provider = "prisma-client"
+    provider = "prisma-client-js"
     output   = "../src/generated/prisma"
 }
 
@@ -26,9 +26,7 @@ model User {
 
 model Client {
     id           Int        @id @default(autoincrement()) @map("id_cliente")
-    firstName    String     @map("nombre") @db.VarChar(100)
-    lastName     String     @map("apellido") @db.VarChar(100)
-    displayName  String     @map("display_name")
+    displayName  String     @map("nombre_apellido")
     birthDate    String?    @map("fecha_nacimiento")
     email        String?    @unique @map("correo") @db.VarChar(150)
     phone        String     @unique @map("telefono") @db.VarChar(20)
@@ -47,7 +45,7 @@ model Client {
 model TaxInfo {
     id            Int     @id @default(autoincrement()) @map("id_fiscal")
     clientId      Int     @unique @map("id_cliente")
-    rfc           String? @unique @db.VarChar(13)
+    rfc           String? @db.VarChar(13)
     businessName  String  @map("razon_social") @db.VarChar(200)
     postalCode    String? @map("cp") @db.Char(5)
     taxRegime     String? @map("regimen_fiscal") @db.VarChar(100)
@@ -83,6 +81,21 @@ model Diagnosis {
     client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
     @@map("diagnosticos")
+}
+
+model Payment {
+    id            Int      @id @default(autoincrement()) @map("id_pago")
+    noteId        Int      @map("id_nota")
+    amount        Decimal  @map("monto") @db.Decimal(10, 2)
+    paymentMethod String   @map("metodo_pago") @db.VarChar(20)
+    paymentDate   DateTime @default(now()) @map("fecha_pago")
+    reference     String?  @map("referencia") @db.VarChar(50)
+    notes         String?  @map("notas")
+
+    // Relation
+    saleNote SaleNote @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+    @@map("pagos")
 }
 
 model SatCode {
@@ -140,9 +153,13 @@ model SaleNote {
     total Decimal @db.Decimal(10, 2)
     notes String? @map("notas")
 
+    creditStatus CreditStatus @default(PENDING) @map("estado_credito")
+    dueDate      DateTime?    @map("fecha_vencimiento")
+
     // Relations
     client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
     noteDetails NoteDetail[]
+    payments    Payment[]
 
     @@map("notas_venta")
 }
@@ -153,6 +170,7 @@ model NoteDetail {
     productId   Int     @map("id_producto")
     quantity    Int     @map("cantidad")
     unitPrice   Decimal @map("precio_unitario") @db.Decimal(10, 2)
+    finalPrice  Decimal @map("precio_final") @db.Decimal(10, 2)
     discountPct Decimal @default(0) @map("descuento_pct") @db.Decimal(5, 2)
     amount      Decimal @map("importe") @db.Decimal(10, 2)
 
@@ -195,4 +213,11 @@ enum Status {
 enum Role {
     ADMIN
     CLIENT
+}
+
+enum CreditStatus {
+    PENDING
+    PARTIAL
+    PAID
+    OVERDUE
 }

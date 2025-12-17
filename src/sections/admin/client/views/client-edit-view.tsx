@@ -8,7 +8,11 @@ import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 // schemas
-import { type IClientData } from 'src/core/schemas';
+import {
+  type IClientData,
+  type IClientCreditNoteData,
+  type IClientPaymentData
+} from 'src/core/schemas';
 //
 import ClientEditForm from '../forms/client-edit-form';
 
@@ -16,11 +20,41 @@ import ClientEditForm from '../forms/client-edit-form';
 
 interface ClientEditViewProps {
   client: IClientData;
+  creditNotes: IClientCreditNoteData[];
+  payments: IClientPaymentData[];
+  // Props para la tabla de crédito
+  creditNotesCurrentPage: number;
+  creditNotesTotalPages: number;
+  creditNotesFrom: number;
+  creditNotesTo: number;
+  creditNotesTotalCount: number;
+  // Props para la tabla de pagos
+  paymentsCurrentPage: number;
+  paymentsTotalPages: number;
+  paymentsFrom: number;
+  paymentsTo: number;
+  paymentsTotalCount: number;
 }
 
 // ----------------------------------------------------------------------
 
-export default function ClientEditView({ client }: ClientEditViewProps) {
+export default function ClientEditView({
+  client,
+  creditNotes,
+  payments,
+  // Tabla de crédito
+  creditNotesCurrentPage,
+  creditNotesTotalPages,
+  creditNotesFrom,
+  creditNotesTo,
+  creditNotesTotalCount,
+  // Tabla de pagos
+  paymentsCurrentPage,
+  paymentsTotalPages,
+  paymentsFrom,
+  paymentsTo,
+  paymentsTotalCount
+}: ClientEditViewProps) {
   const settings = useSettingsContext();
 
   return (
@@ -43,8 +77,23 @@ export default function ClientEditView({ client }: ClientEditViewProps) {
         }}
       />
 
-      <ClientEditForm client={client} />
-
+      <ClientEditForm
+        client={client}
+        creditNotes={creditNotes}
+        payments={payments}
+        //
+        creditNotesCurrentPage={creditNotesCurrentPage}
+        creditNotesTotalPages={creditNotesTotalPages}
+        creditNotesFrom={creditNotesFrom}
+        creditNotesTo={creditNotesTo}
+        creditNotesTotalCount={creditNotesTotalCount}
+        //
+        paymentsCurrentPage={paymentsCurrentPage}
+        paymentsTotalPages={paymentsTotalPages}
+        paymentsFrom={paymentsFrom}
+        paymentsTo={paymentsTo}
+        paymentsTotalCount={paymentsTotalCount}
+      />
     </Container>
   );
 }

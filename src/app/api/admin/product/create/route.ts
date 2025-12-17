@@ -11,6 +11,12 @@ import { Decimal } from "src/generated/prisma/runtime/client";
 
 // ----------------------------------------------------------------------
 
+function generateProductCode() {
+    return `PROD-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+}
+
+// ----------------------------------------------------------------------
+
 //* CREATE PRODUCT
 export async function POST(request: Request) {
     const tokenVerification = verifyTokenHasRole(request, 'ADMIN');
@@ -22,6 +28,7 @@ export async function POST(request: Request) {
     }
 
     try {
+
         const data: ICreateProductPayload = await request.json();
         const validationSchema = CreateProductSchema.safeParse(data);
 
@@ -37,10 +44,14 @@ export async function POST(request: Request) {
         }
 
         const parsed = validationSchema.data;
+        const productData = {
+            ...parsed,
+            code: parsed.code ?? generateProductCode(),
+        };
 
         await db.product.create({
             data: {
-                ...parsed,
+                ...productData,
                 price: new Decimal(parsed.price),
             },
         });

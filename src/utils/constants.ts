@@ -1,4 +1,4 @@
-export const LOGO_PLACEHOLDER_PATH = '/logo/logo.png';
+export const LOGO_PLACEHOLDER_PATH = '/logo/optica.jpg';
 export const IMAGE_PLACEHOLDER_PATH = '/assets/images/placeholder.png';
 
 export const CONFIRM_ICON = 'solar:check-circle-bold';

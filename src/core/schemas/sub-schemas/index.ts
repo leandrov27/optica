@@ -2,6 +2,8 @@ export * from './payment-method-schema';
 
 export * from './payment-form-schema';
 
+export * from './credit-status-schema';
+
 export * from './tax-regime-schema';
 
 export * from './cfdi-schema';

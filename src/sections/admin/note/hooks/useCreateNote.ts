@@ -54,16 +54,17 @@ export default function useCreateNote() {
 
   // -- CALCULATE AMOUNT FOR A SINGLE ITEM --
   const calculateItemAmount = useCallback((
-    unitPrice: unknown,
+    finalPrice: unknown,
     quantity: unknown,
     discountPct: unknown
   ): number => {
-    const safeUnitPrice = Math.max(0, Number(unitPrice) || 0);
+    const safeFinalPrice = Math.max(0, Number(finalPrice) || 0);
     const safeQuantity = Math.max(0, Number(quantity) || 0);
     const safeDiscountPct = Math.max(0, Math.min(100, Number(discountPct) || 0));
 
-    const subtotal = safeUnitPrice * safeQuantity;
+    const subtotal = safeFinalPrice * safeQuantity;
     const discountAmount = subtotal * (safeDiscountPct / 100);
+
     return round2(subtotal - discountAmount);
   }, []);
 
@@ -77,17 +78,17 @@ export default function useCreateNote() {
     }
 
     const calculatedSubtotal = noteDetails.reduce((sum, item) => {
-      const unitPrice = Math.max(0, Number(item.unitPrice) || 0);
+      const finalPrice = Math.max(0, Number(item.finalPrice) || 0);
       const quantity = Math.max(0, Number(item.quantity) || 0);
-      return sum + (unitPrice * quantity);
+      return sum + (finalPrice * quantity);
     }, 0);
 
     const calculatedDiscount = noteDetails.reduce((sum, item) => {
-      const unitPrice = Math.max(0, Number(item.unitPrice) || 0);
+      const finalPrice = Math.max(0, Number(item.finalPrice) || 0);
       const quantity = Math.max(0, Number(item.quantity) || 0);
       const discountPct = Math.max(0, Math.min(100, Number(item.discountPct) || 0));
 
-      const itemSubtotal = unitPrice * quantity;
+      const itemSubtotal = finalPrice * quantity;
       return sum + (itemSubtotal * (discountPct / 100));
     }, 0);
 
@@ -104,42 +105,39 @@ export default function useCreateNote() {
   }, [noteDetails]);
 
   // -- UPDATE SINGLE ITEM --
-  const handleDetailChange = useCallback((index: number, field: 'quantity' | 'discountPct', value: string) => {
+  type IEditableField = 'quantity' | 'discountPct' | 'finalPrice';
+
+  const handleDetailChange = useCallback((index: number, field: IEditableField, value: string) => {
     const numericValue = Number(value);
+    if (isNaN(numericValue) || numericValue < 0) return;
 
-    if (isNaN(numericValue) || numericValue < 0) {
-      return;
-    }
-
-    if (field === 'discountPct' && (numericValue < 0 || numericValue > 100)) {
+    if (field === 'discountPct' && numericValue > 100) {
       toast.error('El descuento debe estar entre 0% y 100%');
       return;
     }
 
-    const currentItem = noteDetails[index];
-    if (!currentItem) return;
+    const item = noteDetails[index];
+    if (!item) return;
 
-    // Obtener los valores ACTUALES del formulario (no de noteDetails que puede estar desactualizado)
-    const currentUnitPrice = Number(currentItem.unitPrice) || 0;
+    const newQuantity =
+      field === 'quantity' ? numericValue : Number(item.quantity);
 
-    // Calcular los nuevos valores basados en qué campo cambió
-    const newQuantity = field === 'quantity' ? numericValue : Number(currentItem.quantity) || 0;
-    const newDiscountPct = field === 'discountPct' ? numericValue : Number(currentItem.discountPct) || 0;
+    const newDiscountPct =
+      field === 'discountPct' ? numericValue : Number(item.discountPct);
 
-    // RECALCULAR EL NUEVO AMOUNT
+    const newFinalPrice =
+      field === 'finalPrice' ? numericValue : Number(item.finalPrice);
+
     const newAmount = calculateItemAmount(
-      currentUnitPrice,
+      newFinalPrice,
       newQuantity,
       newDiscountPct
     );
 
-    // ACTUALIZAR AMBOS CAMPOS
     setValue(`noteDetails.${index}.${field}`, numericValue);
     setValue(`noteDetails.${index}.amount`, newAmount);
 
-    // Recalcular totales generales
     calculateTotals();
-
   }, [noteDetails, setValue, calculateItemAmount, calculateTotals]);
 
   // -- CLIENT CHANGE --
@@ -168,6 +166,7 @@ export default function useCreateNote() {
       productId: product.id,
       description: product.description,
       unitPrice: unitPrice,
+      finalPrice: unitPrice,
       quantity: 1,
       discountPct: 0,
       amount: round2(unitPrice),

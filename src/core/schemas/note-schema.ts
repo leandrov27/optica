@@ -42,6 +42,7 @@ export const NoteDetailSchema = z.object({
     productId: z.number().int().positive({ message: 'Seleccione un producto válido.' }),
     quantity: z.number().int().positive({ message: 'La cantidad debe ser mayor a 0.' }),
     unitPrice: decimalValidator,
+    finalPrice: decimalValidator,
     discountPct: discountPctValidator.default(0),
     amount: decimalValidator,
 });
@@ -66,10 +67,10 @@ export const NoteSchema = z.object({
     notes: z.string().nullable(),
     noteDetails: z.array(NoteDetailSchema)
         .nonempty({ message: 'Debe agregar al menos un producto a la nota.' })
-        .refine((details) => {
-            // Validar que el monto sea consistente
-            return details.every(d => d.amount === Number((d.quantity * d.unitPrice * (1 - d.discountPct / 100)).toFixed(2)));
-        }, { message: 'El importe de un producto no coincide con la cantidad, precio y descuento.' }),
+        //.refine((details) => {
+           // // Validar que el monto sea consistente
+           // return details.every(d => d.amount === Number((d.quantity * d.unitPrice * (1 - d.discountPct / 100)).toFixed(2)));
+        //}, { message: 'El importe de un producto no coincide con la cantidad, precio y descuento.' }),
 });
 
 // ----------------------------------------------------------------------

@@ -15,16 +15,20 @@ const ProductSchema = z.object({
         .number()
         .int()
         .positive({ error: 'Seleccione una clave SAT.' }),
-    code: z
-        .string()
-        .min(1, { error: `El código del servicio es requerido.` })
-        .max(50, {
-            error: ({ maximum }) => {
-                return `El código del servicio no debe exceder más de ${maximum} caracteres.`;
-            },
-        })
-        .toUpperCase()
-        .trim(),
+    code: z.preprocess(
+        (val) => {
+            if (val === '' || val === undefined) return null;
+            if (typeof val === 'string') return val.toUpperCase().trim();
+            return val;
+        },
+        z
+            .string()
+            .max(50, {
+                error: ({ maximum }) =>
+                    `El código del servicio no debe exceder más de ${maximum} caracteres.`,
+            })
+            .nullable()
+    ),
     description: z
         .string()
         .min(1, { error: `La descripción del servicio es requerida.` })

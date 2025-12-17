@@ -25,22 +25,54 @@ import {
   PaymentMethodSchema,
   TypeSchema
 } from 'src/core/schemas/sub-schemas';
-import { type IClientData } from 'src/core/schemas';
+import { type IClientData, type IClientPaymentData, type IClientCreditNoteData } from 'src/core/schemas';
 //
 import BirthtdatePicker from '../widgets/bday-picker';
 import DatePicker from '../widgets/date-picker';
 import DiagnosisTable from '../components/diagnosis-table';
 import useEditClient from '../hooks/useEditClient';
+import ClientNoteListTable from '../components/client-note-list-table';
+import ClientDepositListTable from '../components/client-deposit-list-table';
 
 // ----------------------------------------------------------------------
 
 interface ClientEditFormProps {
   client: IClientData;
+  creditNotes: IClientCreditNoteData[];
+  payments: IClientPaymentData[];
+  // Props para la tabla de crédito
+  creditNotesCurrentPage: number;
+  creditNotesTotalPages: number;
+  creditNotesFrom: number;
+  creditNotesTo: number;
+  creditNotesTotalCount: number;
+  // Props para la tabla de pagos
+  paymentsCurrentPage: number;
+  paymentsTotalPages: number;
+  paymentsFrom: number;
+  paymentsTo: number;
+  paymentsTotalCount: number;
 }
 
 // ----------------------------------------------------------------------
 
-export default function ClientEditForm({ client }: ClientEditFormProps) {
+export default function ClientEditForm({
+  client,
+  creditNotes,
+  payments,
+  // Tabla de crédito
+  creditNotesCurrentPage,
+  creditNotesTotalPages,
+  creditNotesFrom,
+  creditNotesTo,
+  creditNotesTotalCount,
+  // Tabla de pagos
+  paymentsCurrentPage,
+  paymentsTotalPages,
+  paymentsFrom,
+  paymentsTo,
+  paymentsTotalCount
+}: ClientEditFormProps) {
   const {
     //~
     isSubmitting,
@@ -79,8 +111,9 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
   ), [fields]);
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(sendForm)}>
-      <Grid container spacing={3}>
+
+    <Grid container spacing={3}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(sendForm)}>
         {/** DATOS PERSONALES */}
         <Grid xs={12} md={isTaxInfoEnabled ? 6 : 12} lg={isTaxInfoEnabled ? 6 : 12} sx={{ transition: 'all 0.5s ease-in-out' }}>
           <Card sx={{ p: 3 }}>
@@ -91,12 +124,8 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
             <Divider sx={{ my: 2 }} />
 
             <Grid container spacing={2}>
-              <Grid xs={6} md={6} lg={6}>
-                <RHFTextField name="firstName" label="Nombre" disabled={isSubmitting} />
-              </Grid>
-
-              <Grid xs={6} md={6} lg={6}>
-                <RHFTextField name="lastName" label="Apellido" disabled={isSubmitting} />
+              <Grid xs={12} md={12} lg={12}>
+                <RHFTextField name="displayName" label="Nombre & Apellido" disabled={isSubmitting} />
               </Grid>
 
               <Grid xs={12} md={12} lg={6}>
@@ -407,6 +436,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
             </Grid>
           </Card>
         </Grid>
+
         <Fab
           type="submit"
           sx={{
@@ -420,7 +450,48 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
         >
           <Iconify icon="fluent:save-20-regular" width={38} />
         </Fab>
+      </FormProvider>
+
+      {/** CRÉDITO */}
+      <Grid xs={12} md={12} lg={12}>
+        <Card sx={{ px: 3, pt: 3 }}>
+          <Typography variant="h6">
+            Notas de Venta a Crédito de {client.displayName}
+          </Typography>
+
+          <Divider sx={{ my: 2 }} />
+
+          <ClientNoteListTable
+            notes={creditNotes}
+            //
+            currentPage={creditNotesCurrentPage}
+            from={creditNotesFrom}
+            to={creditNotesTo}
+            totalPages={creditNotesTotalPages}
+            totalItems={creditNotesTotalCount}
+          />
+        </Card>
       </Grid>
-    </FormProvider>
+
+      <Grid xs={12} md={12} lg={12}>
+        <Card sx={{ px: 3, pt: 3 }}>
+          <Typography variant="h6">
+            Historial de Depósitos Realizados
+          </Typography>
+
+          <Divider sx={{ my: 2 }} />
+
+          <ClientDepositListTable
+            payments={payments}
+            //
+            currentPage={paymentsCurrentPage}
+            from={paymentsFrom}
+            to={paymentsTo}
+            totalPages={paymentsTotalPages}
+            totalItems={paymentsTotalCount}
+          />
+        </Card>
+      </Grid>
+    </Grid>
   );
 }

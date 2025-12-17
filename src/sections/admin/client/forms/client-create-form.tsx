@@ -89,12 +89,8 @@ export default function ClientCreateForm({ onSuccess }: { onSuccess?: VoidFuncti
                         <Divider sx={{ my: 2 }} />
 
                         <Grid container spacing={2}>
-                            <Grid xs={6} md={6} lg={6}>
-                                <RHFTextField name="firstName" label="Nombre" disabled={isSubmitting} />
-                            </Grid>
-
-                            <Grid xs={6} md={6} lg={6}>
-                                <RHFTextField name="lastName" label="Apellido" disabled={isSubmitting} />
+                            <Grid xs={12} md={12} lg={12}>
+                                <RHFTextField name="displayName" label="Nombre & Apellido" disabled={isSubmitting} />
                             </Grid>
 
                             <Grid xs={12} md={12} lg={6}>
