@@ -16,6 +16,8 @@ export const metadata = {
   title: 'Panel de Control',
 };
 
+// ----------------------------------------------------------------------
+
 async function getSalesByPaymentMethod(params?: { dateFrom?: Date; dateTo?: Date; paymentMethod?: string; }) {
   try {
     const { dateFrom, dateTo, paymentMethod } = params || {};
@@ -55,11 +57,31 @@ async function getSalesByPaymentMethod(params?: { dateFrom?: Date; dateTo?: Date
   }
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   try {
-    const data = await getSalesByPaymentMethod();
+    // Parsear parámetros de la URL
+    const dateFrom = searchParams?.dateFrom
+      ? new Date(searchParams.dateFrom as string)
+      : undefined;
+    const dateTo = searchParams?.dateTo
+      ? new Date(searchParams.dateTo as string)
+      : undefined;
+    const paymentMethod = searchParams?.paymentMethod as string | undefined;
 
-    return <DashboardView salesByPaymentMethod={data} />;
+    const data = await getSalesByPaymentMethod({
+      dateFrom,
+      dateTo,
+      paymentMethod
+    });
+
+    return <DashboardView
+      salesByPaymentMethod={data}
+      initialFilters={{ dateFrom, dateTo, paymentMethod }}
+    />;
   } catch (error) {
     console.error('Error capturado:', error);
     return <ErrorCard message={error.message} />;

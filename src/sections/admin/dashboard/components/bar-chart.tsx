@@ -12,13 +12,13 @@ interface Props extends CardProps {
   title?: string;
   subheader?: string;
   chart: {
-    categories: string[]; // Payment methods (labels)
+    categories: string[];
     colors?: string[];
     series: {
-      type: string; // Ej: 'Ventas'
+      type: string; 
       data: {
-        name: string; // Ej: 'Monto'
-        data: number[]; // Montos
+        name: string;
+        data: number[];
       }[];
     }[];
     options?: ApexOptions;
@@ -41,9 +41,9 @@ export default function BarChart({ title, subheader, chart, ...other }: Props) {
     tooltip: {
       y: {
         formatter: (value: number) =>
-          value.toLocaleString('es-PY', {
+          value.toLocaleString('es-MX', {
             style: 'currency',
-            currency: 'PYG',
+            currency: 'MXN',
             maximumFractionDigits: 0,
           }),
       },
@@ -51,7 +51,7 @@ export default function BarChart({ title, subheader, chart, ...other }: Props) {
     plotOptions: {
       bar: {
         horizontal: false,
-        columnWidth: '40%',
+        columnWidth: '10%',
         borderRadius: 4,
       },
     },

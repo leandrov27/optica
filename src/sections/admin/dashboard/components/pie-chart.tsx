@@ -75,7 +75,7 @@ export default function PieChart({ title, subheader, chart, ...other }: Props) {
       y: {
         formatter: (value: number) => fNumber(value),
         title: {
-          formatter: (seriesName: string) => `${seriesName}`,
+          formatter: (seriesName: string) => `${seriesName} $`,
         },
       },
     },

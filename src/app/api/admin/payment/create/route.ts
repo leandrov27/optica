@@ -5,9 +5,15 @@ import db from "src/libs/prisma";
 // utils
 import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
-import { CreatePaymentSchema, type ICreatePaymentPayload } from "src/core/schemas";
+import { CreatePaymentSchema, getPaymentMethodLabel, type ICreatePaymentPayload } from "src/core/schemas";
 // generated
 import { Decimal } from "src/generated/prisma/runtime/client";
+// pkgs
+import { Resend } from 'resend';
+// config
+import { RESEND_API_KEY } from "src/config/config-server";
+// components
+import { EmailTemplate } from "src/components/email/email-template";
 
 // ----------------------------------------------------------------------
 
@@ -16,6 +22,36 @@ const isGreaterThan = (a: number, b: number, epsilon = 0.001): boolean => {
     const roundedB = Math.round(b * 100) / 100;
     return roundedA > roundedB + epsilon;
 };
+
+const resend = new Resend(RESEND_API_KEY);
+
+// ----------------------------------------------------------------------
+
+// Función para enviar correo
+async function sendPaymentEmail(emailData: any, settingsData: any) {
+    try {
+        const { data, error } = await resend.emails.send({
+            from: `${settingsData.name} <oha@med-directory.online>`,
+            to: emailData.email,
+            subject: `Confirmación de Pago - Nota #${emailData.paymentData.folio}`,
+            react: EmailTemplate({
+                firstName: emailData.firstName,
+                paymentData: emailData.paymentData,
+                settingsData: settingsData
+            }),
+        });
+
+        if (error) {
+            console.error('Error al enviar correo:', error);
+            return;
+        }
+
+        console.log('Correo enviado exitosamente a:', emailData.email);
+
+    } catch (emailError) {
+        console.error('Error al enviar correo:', emailError);
+    }
+}
 
 //* CREATE PAYMENT
 export async function POST(request: Request) {
@@ -175,6 +211,51 @@ export async function POST(request: Request) {
             }
         };
 
+        // Agregar información del cliente y folio
+        const saleNoteWithClient = await db.saleNote.findUnique({
+            where: { id: parsed.noteId },
+            include: {
+                client: true
+            }
+        });
+
+        const emailData = {
+            firstName: saleNoteWithClient?.client?.displayName || 'Cliente',
+            email: saleNoteWithClient?.client.email || 'delivered@resend.dev',
+            paymentData: {
+                folio: saleNoteWithClient?.folio,
+                clientName: saleNoteWithClient?.client?.displayName || 'Cliente',
+                amount: roundedAmount,
+                paymentMethod: parsed.paymentMethod,
+                paymentMethodLabel: getPaymentMethodLabel(parsed.paymentMethod),
+                paymentDate: new Date().toLocaleDateString('es-MX', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
+                reference: parsed.reference,
+                saleNoteId: parsed.noteId,
+                previousBalance: pendingBalance,
+                newBalance: newPendingBalance,
+                totalAmount: totalAmount,
+                paymentPercentage: `${((roundedAmount / totalAmount) * 100).toFixed(2)}%`,
+                status: newCreditStatus
+            }
+        };
+
+        const settingsInfo = await db.setting.findFirst({
+            select: {
+                phone: true,
+                name: true,
+                currencySymbol: true,
+            }
+        });
+
+        // 10. Enviar correo de manera asíncrona
+        await sendPaymentEmail(emailData, settingsInfo);
+
         return NextResponse.json(
             {
                 message: 'Pago registrado correctamente',
@@ -214,47 +295,5 @@ export async function POST(request: Request) {
             },
             { status: 500 }
         );
-    }
-}
-
-// Función para enviar correo (opcional)
-async function sendPaymentEmail(paymentData: any) {
-    try {
-        // Implementa el envío de correo aquí
-        console.log('Datos para enviar correo:', {
-            to: paymentData.clientInfo?.clientEmail,
-            clientName: paymentData.clientInfo?.clientName,
-            folio: paymentData.saleNoteInfo?.folio,
-            amount: paymentData.amount,
-            newBalance: paymentData.financialSummary.newPendingBalance,
-            paymentMethod: paymentData.paymentMethod
-        });
-
-        // Ejemplo de implementación:
-        /*
-        const mailOptions = {
-            from: process.env.EMAIL_FROM,
-            to: paymentData.clientInfo.clientEmail,
-            subject: `Confirmación de Pago - Nota ${paymentData.saleNoteInfo.folio}`,
-            html: `
-                <h2>Confirmación de Pago</h2>
-                <p>Estimado(a) ${paymentData.clientInfo.clientName},</p>
-                <p>Se ha registrado un pago exitoso con los siguientes detalles:</p>
-                <ul>
-                    <li><strong>Nota de Venta:</strong> ${paymentData.saleNoteInfo.folio}</li>
-                    <li><strong>Monto del pago:</strong> $${paymentData.amount.toFixed(2)}</li>
-                    <li><strong>Método de pago:</strong> ${paymentData.paymentMethod}</li>
-                    <li><strong>Nuevo saldo pendiente:</strong> $${paymentData.financialSummary.newPendingBalance.toFixed(2)}</li>
-                    <li><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-MX')}</li>
-                </ul>
-                <p>Gracias por su pago.</p>
-            `
-        };
-        
-        await transporter.sendMail(mailOptions);
-        */
-    } catch (emailError) {
-        console.error('Error al enviar correo:', emailError);
-        // No fallar el pago solo por error en el correo
     }
 }
