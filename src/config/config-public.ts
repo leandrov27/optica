@@ -5,7 +5,7 @@ import { paths } from "src/routes/paths";
 export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'Empresys';
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || '';
 export const VPS_URL = process.env.NEXT_PUBLIC_VPS_URL;
-
+export const RESEND_FROM = process.env.NEXT_PUBLIC_RESEND_FROM || 'oha@med-directory.online';
 // ----------------------------------------------------------------------
 
 export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || 'v1.0';

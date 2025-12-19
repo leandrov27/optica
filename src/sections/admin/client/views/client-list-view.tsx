@@ -52,7 +52,7 @@ export default function ClientListView({
         heading="Lista de Clientes"
         links={[
           {
-            name: 'Panel de Control',
+            name: 'Tablero de Ventas',
             href: paths.admin.root,
           },
           { name: 'Clientes' },

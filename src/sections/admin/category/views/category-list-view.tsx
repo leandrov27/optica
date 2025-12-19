@@ -57,7 +57,7 @@ export default function CategoryListView({
         heading="Gestión de Categorías"
         links={[
           {
-            name: 'Panel de Control',
+            name: 'Tablero de Ventas',
             href: paths.admin.root,
           },
           { name: 'Gestión de Categorías' },

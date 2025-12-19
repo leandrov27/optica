@@ -21,7 +21,7 @@ export default function UserCreateView() {
         heading="Registar Nuevo Usuario"
         links={[
           {
-            name: 'Panel de Control',
+            name: 'Tablero de Ventas',
             href: paths.admin.root,
           },
           {

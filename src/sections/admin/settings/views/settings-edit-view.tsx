@@ -29,7 +29,7 @@ export default function SettingsEditView({ settingsData }: SettingsEditViewProps
                 heading={`Ajustes del Sistema`}
                 links={[
                     {
-                        name: 'Panel de Control',
+                        name: 'Tablero de Ventas',
                         href: paths.admin.root,
                     },
                     {

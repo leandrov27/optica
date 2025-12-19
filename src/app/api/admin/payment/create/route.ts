@@ -12,6 +12,7 @@ import { Decimal } from "src/generated/prisma/runtime/client";
 import { Resend } from 'resend';
 // config
 import { RESEND_API_KEY } from "src/config/config-server";
+import { RESEND_FROM } from "src/config/config-public";
 // components
 import { EmailTemplate } from "src/components/email/email-template";
 
@@ -31,7 +32,7 @@ const resend = new Resend(RESEND_API_KEY);
 async function sendPaymentEmail(emailData: any, settingsData: any) {
     try {
         const { data, error } = await resend.emails.send({
-            from: `${settingsData.name} <oha@med-directory.online>`,
+            from: `${settingsData.name} <${RESEND_FROM}>`,
             to: emailData.email,
             subject: `Confirmación de Pago - Nota #${emailData.paymentData.folio}`,
             react: EmailTemplate({

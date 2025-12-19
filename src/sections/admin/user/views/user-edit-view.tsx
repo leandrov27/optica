@@ -29,7 +29,7 @@ export default function UserEditView({ user }: UserEditViewProps) {
         heading="Modificar Usuario"
         links={[
           {
-            name: 'Panel de Control',
+            name: 'Tablero de Ventas',
             href: paths.admin.root,
           },
           {

@@ -63,7 +63,7 @@ export default function ClientEditView({
         heading="Modificar Cliente"
         links={[
           {
-            name: 'Panel de Control',
+            name: 'Tablero de Ventas',
             href: paths.admin.root,
           },
           {

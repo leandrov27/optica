@@ -10,6 +10,16 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { DatePicker } from '@mui/x-date-pickers';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Pagination from '@mui/material/Pagination';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 // routes
 import { useRouter, useSearchParams } from 'src/routes/hook'
 // components
@@ -29,18 +39,47 @@ import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@m
 
 // ----------------------------------------------------------------------
 
-type DashboardViewProps = {
+interface SalesDetails {
+    sales: Array<{
+        id: number;
+        date: Date;
+        paymentForm: string;
+        total: number;
+        client?: { displayName: string };
+    }>;
+    totalsByPayment: Array<{
+        paymentMethod: string;
+        total: number;
+    }>;
+    pagination: {
+        currentPage: number;
+        pageSize: number;
+        totalItems: number;
+        totalPages: number;
+    };
+    totalAmount: number;
+}
+
+interface DashboardViewProps {
     salesByPaymentMethod: any;
-    initialFilters?: {
+    salesDetails: SalesDetails;
+    initialFilters: {
         dateFrom?: Date;
         dateTo?: Date;
         paymentMethod?: string;
+        page?: number;
     };
+    defaultDateRange: 'today' | 'custom' | 'none';
 }
 
 // ----------------------------------------------------------------------
 
-export default function DashboardView({ salesByPaymentMethod, initialFilters }: DashboardViewProps) {
+export default function DashboardView({
+    salesByPaymentMethod,
+    salesDetails,
+    initialFilters,
+    defaultDateRange
+}: DashboardViewProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const settings = useSettingsContext();
@@ -52,16 +91,17 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
 
     // ========== INICIALIZAR FECHAS DESDE PARÁMETROS O VALORES POR DEFECTO ========== //
     const getInitialDates = () => {
+        // Si hay fechas en los filtros iniciales, usarlas
         if (initialFilters?.dateFrom && initialFilters?.dateTo) {
             return {
                 startDate: dayjs(initialFilters.dateFrom),
                 endDate: dayjs(initialFilters.dateTo)
             };
         }
-        // Valores por defecto
+        // Por defecto: mostrar campos vacíos
         return {
-            startDate: dayjs().startOf('day'),
-            endDate: dayjs().startOf('day').add(7, 'days')
+            startDate: null,
+            endDate: null
         };
     };
 
@@ -71,24 +111,54 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
     const [startDate, setStartDate] = useState(initialDates.startDate);
     const [endDate, setEndDate] = useState(initialDates.endDate);
     const [paymentMethod, setPaymentMethod] = useState<string>(
-        initialFilters?.paymentMethod || ''
+        initialFilters?.paymentMethod || 'all'
     );
     const [dateError, setDateError] = useState(false);
     const [isFiltered, setIsFiltered] = useState(
         !!initialFilters?.dateFrom ||
         !!initialFilters?.dateTo ||
-        !!initialFilters?.paymentMethod
+        (!!initialFilters?.paymentMethod && initialFilters.paymentMethod !== 'all')
     );
+
+    // ========== FUNCIONES UTILITARIAS ========== //
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN'
+        }).format(amount);
+    };
+
+    const formatDate = (date: Date) => {
+        return dayjs(date).format('DD/MM/YYYY HH:mm');
+    };
+
+    const getPaymentMethodLabel = (key: string) => {
+        const option = PAYMENT_FORM_OPTIONS.find(opt => opt.key === key);
+        return option ? option.label : key;
+    };
+
+    const getChartPeriodText = () => {
+        if (!startDate && !endDate) {
+            return "Total histórico (sin filtro de fechas)";
+        }
+        if (startDate && endDate) {
+            return `Período: ${startDate.format('DD/MM/YYYY')} - ${endDate.format('DD/MM/YYYY')}`;
+        }
+        return "Período personalizado";
+    };
 
     // ========== HANDLERS ========== //
     const handleStartDateChange = (newStartDate: dayjs.Dayjs | null) => {
-        if (!newStartDate) return;
+        if (!newStartDate) {
+            setStartDate(null);
+            return;
+        }
 
-        if (endDate.isBefore(newStartDate)) {
+        if (endDate && endDate.isBefore(newStartDate)) {
             setDateError(true);
         } else {
             setDateError(false);
-            if (endDate.diff(newStartDate, 'day') > 30) {
+            if (endDate && endDate.diff(newStartDate, 'day') > 30) {
                 setEndDate(newStartDate.add(30, 'day'));
             }
 
@@ -97,13 +167,16 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
     };
 
     const handleEndDateChange = (newEndDate: dayjs.Dayjs | null) => {
-        if (!newEndDate) return;
+        if (!newEndDate) {
+            setEndDate(null);
+            return;
+        }
 
-        if (newEndDate.isBefore(startDate)) {
+        if (startDate && newEndDate.isBefore(startDate)) {
             setDateError(true);
         } else {
             setDateError(false);
-            if (newEndDate.diff(startDate, 'day') > 30) {
+            if (startDate && newEndDate.diff(startDate, 'day') > 30) {
                 setStartDate(newEndDate.subtract(30, 'day'));
             }
 
@@ -121,14 +194,19 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
         // Construir nuevos parámetros de búsqueda
         const params = new URLSearchParams();
 
-        // Agregar fechas a los parámetros
-        params.set('dateFrom', startDate.format('YYYY-MM-DD'));
-        params.set('dateTo', endDate.format('YYYY-MM-DD'));
+        // Solo agregar fechas si ambas están seleccionadas
+        if (startDate && endDate) {
+            params.set('dateFrom', startDate.format('YYYY-MM-DD'));
+            params.set('dateTo', endDate.format('YYYY-MM-DD'));
+        }
 
-        // Agregar método de pago si está seleccionado
-        if (paymentMethod) {
+        // Agregar método de pago si está seleccionado y no es "all"
+        if (paymentMethod && paymentMethod !== 'all') {
             params.set('paymentMethod', paymentMethod);
         }
+
+        // Resetear a página 1 al aplicar nuevos filtros
+        params.set('page', '1');
 
         // Limpiar y actualizar la URL
         router.push(`?${params.toString()}`);
@@ -139,14 +217,21 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
         // Limpiar todos los parámetros
         router.push('?');
 
-        // Resetear a valores por defecto
-        setStartDate(dayjs().startOf('day'));
-        setEndDate(dayjs().startOf('day').add(7, 'days'));
-        setPaymentMethod('');
+        // Resetear estados
+        setStartDate(null);
+        setEndDate(null);
+        setPaymentMethod('all');
         setDateError(false);
         setIsFiltered(false);
     };
 
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('page', page.toString());
+        router.push(`?${params.toString()}`);
+    };
+
+    // ========== COMPONENTES RENDERIZADOS ========== //
     const renderDateRange = (
         <Stack spacing={2} sx={{ mb: 1, px: 0 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -174,6 +259,11 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
                     maxDate={maxDate}
                     onChange={handleStartDateChange}
                     disabled={false}
+                    slotProps={{
+                        textField: {
+                            helperText: !startDate ? 'Dejar vacío para ver todas las fechas' : '',
+                        },
+                    }}
                 />
 
                 <DatePicker
@@ -186,7 +276,9 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
                     slotProps={{
                         textField: {
                             error: dateError,
-                            helperText: dateError && 'La fecha final no puede ser anterior a la inicial.',
+                            helperText: dateError
+                                ? 'La fecha final no puede ser anterior a la inicial.'
+                                : !endDate ? 'Dejar vacío para ver todas las fechas' : '',
                         },
                     }}
                 />
@@ -199,12 +291,12 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
                         label="Método de Pago"
                         onChange={handlePaymentMethodChange}
                     >
-                        <MenuItem value="">
+                        <MenuItem value="all">
                             <em>Todos los métodos</em>
                         </MenuItem>
                         {PAYMENT_FORM_OPTIONS.map((option) => (
                             <MenuItem key={option.key} value={option.key}>
-                                {option.key} - {option.label}
+                                {option.label}
                             </MenuItem>
                         ))}
                     </Select>
@@ -231,26 +323,159 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
             >
                 <Iconify icon="mdi:information" width={16} />
                 <Typography variant="caption" color="text.secondary">
-                    Máximo 30 días de rango
+                    {startDate && endDate ? 'Máximo 30 días de rango' : 'Dejar fechas vacías para ver todo'}
                 </Typography>
             </Stack>
+
+            {/* Indicadores de estado */}
+            {defaultDateRange === 'today' && !isFiltered && (
+                <Chip
+                    label="Tabla: Mostrando ventas de hoy"
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                    sx={{ mt: 1 }}
+                />
+            )}
+
+            {defaultDateRange === 'none' && !isFiltered && (
+                <Chip
+                    label="Charts: Mostrando todas las ventas"
+                    color="info"
+                    variant="outlined"
+                    size="small"
+                    sx={{ mt: 1 }}
+                />
+            )}
 
             {isFiltered && (
                 <Stack spacing={0.5} sx={{ mt: 2, p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>
                     <Typography variant="caption" color="text.secondary">
                         Filtros activos:
                     </Typography>
-                    <Typography variant="caption">
-                        • Fechas: {startDate.format('DD/MM/YYYY')} - {endDate.format('DD/MM/YYYY')}
-                    </Typography>
-                    {paymentMethod && (
+                    {startDate && endDate && (
                         <Typography variant="caption">
-                            • Método: {PAYMENT_FORM_OPTIONS.find(opt => opt.key === paymentMethod)?.label}
+                            • Fechas: {startDate.format('DD/MM/YYYY')} - {endDate.format('DD/MM/YYYY')}
                         </Typography>
                     )}
+                    {paymentMethod && paymentMethod !== 'all' && (
+                        <Typography variant="caption">
+                            • Método: {getPaymentMethodLabel(paymentMethod)}
+                        </Typography>
+                    )}
+                    <Typography variant="caption">
+                        • Mostrando {salesDetails.pagination.totalItems} ventas en total
+                    </Typography>
                 </Stack>
             )}
         </Stack>
+    );
+
+    const renderSalesTable = () => (
+        <Card sx={{ p: 3 }}>
+            <Stack spacing={3}>
+                <Box>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                        Ventas del período
+                    </Typography>
+
+                    {/* Resumen de totales */}
+                    <Grid container spacing={2} sx={{ mb: 3 }}>
+                        <Grid xs={12} sm={6} md={3}>
+                            <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'primary.lighter' }}>
+                                <Typography variant="subtitle2" color="text.secondary">
+                                    Total General
+                                </Typography>
+                                <Typography variant="h5" color="primary.main">
+                                    {formatCurrency(salesDetails.totalAmount)}
+                                </Typography>
+                            </Paper>
+                        </Grid>
+
+                        {salesDetails.totalsByPayment.map((item) => (
+                            <Grid xs={12} sm={6} md={3} key={item.paymentMethod}>
+                                <Paper sx={{ p: 2, textAlign: 'center' }}>
+                                    <Typography variant="subtitle2" color="text.secondary">
+                                        {getPaymentMethodLabel(item.paymentMethod)}
+                                    </Typography>
+                                    <Typography variant="h6">
+                                        {formatCurrency(item.total)}
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+
+                {/* Tabla de ventas */}
+                <TableContainer component={Paper} variant="outlined">
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Fecha y Hora</TableCell>
+                                <TableCell>Cliente</TableCell>
+                                <TableCell>Método de Pago</TableCell>
+                                <TableCell align="right">Monto</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {salesDetails.sales.length > 0 ? (
+                                salesDetails.sales.map((sale) => (
+                                    <TableRow key={sale.id} hover>
+                                        <TableCell>
+                                            {formatDate(sale.date)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {sale.client?.displayName || 'Sin cliente'}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Chip
+                                                label={getPaymentMethodLabel(sale.paymentForm)}
+                                                size="small"
+                                                variant="outlined"
+                                            />
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Typography variant="body2" fontWeight="medium">
+                                                {formatCurrency(sale.total)}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4} align="center" sx={{ py: 3 }}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            No hay ventas en el período seleccionado
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                {/* Paginación */}
+                {salesDetails.pagination.totalPages > 1 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                        <Pagination
+                            count={salesDetails.pagination.totalPages}
+                            page={salesDetails.pagination.currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            showFirstButton
+                            showLastButton
+                        />
+                    </Box>
+                )}
+
+                {/* Info de paginación */}
+                <Typography variant="caption" color="text.secondary" align="center">
+                    Mostrando {salesDetails.sales.length} de {salesDetails.pagination.totalItems} ventas
+                    (Página {salesDetails.pagination.currentPage} de {salesDetails.pagination.totalPages})
+                </Typography>
+            </Stack>
+        </Card>
     );
 
     const salesByPaymentBarChart = {
@@ -271,12 +496,9 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
     return (
         <Container maxWidth={settings.themeStretch ? false : 'xl'}>
             <Grid container spacing={3}>
+                {/* Tabla de ventas */}
                 <Grid xs={12} md={8} lg={8}>
-                    <DashboardWidgetWelcome
-                        title={`Bienvenido de nuevo 👋 \n ${user?.firstName}`}
-                        description="Aquí puedes monitorear las transacciones del su empresa."
-                        img={<SeoIllustration />}
-                    />
+                    {renderSalesTable()}
                 </Grid>
 
                 <Grid xs={12} md={4} lg={4}>
@@ -284,21 +506,25 @@ export default function DashboardView({ salesByPaymentMethod, initialFilters }: 
                         {renderDateRange}
                     </Card>
                 </Grid>
-
+                
+                {/* Gráficos */}
                 <Grid xs={12} md={5} lg={5}>
                     <PieChart
                         title="Porcentaje de ventas por forma de pago"
                         chart={salesByPaymentMethod}
+                        subheader={getChartPeriodText()}
                     />
                 </Grid>
 
                 <Grid xs={12} md={7} lg={7}>
                     <BarChart
                         title="Ventas por forma de pago"
-                        subheader={`Total del período: ${startDate.format('DD/MM/YYYY')} - ${endDate.format('DD/MM/YYYY')}`}
+                        subheader={getChartPeriodText()}
                         chart={salesByPaymentBarChart}
                     />
                 </Grid>
+
+
             </Grid>
         </Container>
     )

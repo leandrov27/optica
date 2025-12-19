@@ -13,7 +13,7 @@ const SettingSchema = z.object({
         .positive(),
     name: z
         .string()
-        .min(4, {
+        .min(3, {
             error: ({ minimum }) => {
                 return `El nombre de su negocio debe tener al menos ${minimum} caracteres.`;
             },

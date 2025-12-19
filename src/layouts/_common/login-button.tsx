@@ -37,7 +37,7 @@ export default function LoginButton({ sx }: Props) {
 
   return (
     <Button component={RouterLink} href={getLoginPath()} variant="outlined" sx={{ mr: 1, ...sx }}>
-      {isAdmin ? 'Panel de Control' : 'Acceder'}
+      {isAdmin ? 'Tablero de Ventas' : 'Acceder'}
     </Button>
   );
 }

@@ -29,7 +29,7 @@ export default function NoteEditView({ note }: NoteEditViewProps) {
                 heading="Modificar Nota de Venta"
                 links={[
                     {
-                        name: 'Panel de Control',
+                        name: 'Tablero de Ventas',
                         href: paths.admin.root,
                     },
                     {

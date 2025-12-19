@@ -33,7 +33,7 @@ export function useNavData() {
         subheader: 'general',
         items: [
           {
-            title: 'Panel de Control',
+            title: 'Tablero de Ventas',
             path: paths.admin.root,
             icon: ICONS.dashboard
           },

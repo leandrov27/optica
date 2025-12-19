@@ -52,7 +52,7 @@ export default function UserListView({
         heading="Lista de Usuarios"
         links={[
           {
-            name: 'Panel de Control',
+            name: 'Tablero de Ventas',
             href: paths.admin.root,
           },
           { name: 'Usuarios' },

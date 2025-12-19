@@ -20,7 +20,7 @@ export default function UserProfileView() {
       heading={`Perfil de Usuario`}
       links={[
         {
-          name: 'Panel de Control',
+          name: 'Tablero de Ventas',
           href: paths.admin.root,
         },
         {
