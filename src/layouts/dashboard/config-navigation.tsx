@@ -21,6 +21,8 @@ const ICONS = {
   //
   category: icon('ic_category'),
   //
+  message: icon('ic_message'),
+  //
   user: icon('ic_user'),
 };
 
@@ -35,7 +37,7 @@ export function useNavData() {
           {
             title: 'Tablero de Ventas',
             path: paths.admin.root,
-            icon: ICONS.dashboard
+            icon: ICONS.dashboard,
           },
         ],
       },
@@ -62,7 +64,16 @@ export function useNavData() {
             path: paths.admin.category,
             icon: ICONS.category,
           },
-        ]
+          {
+            title: 'Eventos',
+            path: paths.admin.template.list,
+            icon: ICONS.message,
+            children: [
+              { title: 'Plantillas de WhatsApp', path: paths.admin.template.list },
+              { title: 'Eventos de Mensaje', path: paths.admin.event.list },
+            ],
+          },
+        ],
       },
       {
         subheader: 'Administración',
@@ -76,7 +87,7 @@ export function useNavData() {
               { title: 'Registrar Usuario', path: paths.admin.user.create },
             ],
           },
-        ]
+        ],
       },
     ],
     []

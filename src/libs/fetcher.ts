@@ -8,7 +8,7 @@ import { APP_URL } from 'src/config/config-public';
 const ROOTS_API = {
   auth: '/api/auth',
   admin: '/api/admin',
-}
+};
 
 // ----------------------------------------------------------------------
 
@@ -29,9 +29,12 @@ export const API_ENDPOINTS = {
       create: `${ROOTS_API.admin}/note/create`,
       update: (id: number) => `${ROOTS_API.admin}/note/${id}/update`,
       delete: (id: number) => `${ROOTS_API.admin}/note/${id}/delete`,
-      find_notes: (clientId: number) => `${ROOTS_API.admin}/note/find-notes?id=${encodeURIComponent(clientId)}`,
-      search_client: (query: string) => `${ROOTS_API.admin}/note/search-client?q=${encodeURIComponent(query)}`,
-      search_product: (query: string) => `${ROOTS_API.admin}/note/search-product?q=${encodeURIComponent(query)}`,
+      find_notes: (clientId: number) =>
+        `${ROOTS_API.admin}/note/find-notes?id=${encodeURIComponent(clientId)}`,
+      search_client: (query: string) =>
+        `${ROOTS_API.admin}/note/search-client?q=${encodeURIComponent(query)}`,
+      search_product: (query: string) =>
+        `${ROOTS_API.admin}/note/search-product?q=${encodeURIComponent(query)}`,
     },
     payment: {
       create: `${ROOTS_API.admin}/payment/create`,
@@ -43,13 +46,26 @@ export const API_ENDPOINTS = {
       create: `${ROOTS_API.admin}/product/create`,
       update: (id: number) => `${ROOTS_API.admin}/product/${id}/update`,
       delete: (id: number) => `${ROOTS_API.admin}/product/${id}/delete`,
-      search_category: (query: string) => `${ROOTS_API.admin}/product/search-category?q=${encodeURIComponent(query)}`,
-      search_sat: (query: string) => `${ROOTS_API.admin}/product/search-sat?q=${encodeURIComponent(query)}`,
+      search_category: (query: string) =>
+        `${ROOTS_API.admin}/product/search-category?q=${encodeURIComponent(query)}`,
+      search_sat: (query: string) =>
+        `${ROOTS_API.admin}/product/search-sat?q=${encodeURIComponent(query)}`,
     },
     category: {
       create: `${ROOTS_API.admin}/category/create`,
       update: (id: number) => `${ROOTS_API.admin}/category/${id}/update`,
       delete: (id: number) => `${ROOTS_API.admin}/category/${id}/delete`,
+    },
+    event: {
+      create: `${ROOTS_API.admin}/whatsapp/events/create`,
+      update: (id: number) => `${ROOTS_API.admin}/whatsapp/events/${id}/update`,
+      delete: (id: number) => `${ROOTS_API.admin}/whatsapp/events/${id}/delete`,
+      variables: (id: number) => `${ROOTS_API.admin}/whatsapp/events/${id}/variables`,
+    },
+    template: {
+      sync: `${ROOTS_API.admin}/whatsapp/templates/sync`,
+      search_template: (query: string) =>
+        `${ROOTS_API.admin}/whatsapp/templates/search-template?q=${encodeURIComponent(query)}`,
     },
     user: {
       create: `${ROOTS_API.admin}/user/create`,
@@ -60,8 +76,8 @@ export const API_ENDPOINTS = {
     settings: {
       find: `${ROOTS_API.admin}/settings/find`,
       update: `${ROOTS_API.admin}/settings/update`,
-    }
-  }
+    },
+  },
 } as const;
 
 // ----------------------------------------------------------------------

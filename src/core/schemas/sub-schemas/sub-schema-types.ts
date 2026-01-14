@@ -8,12 +8,15 @@ import { CFDISchema } from './cfdi-schema';
 import { PaymentMethodSchema } from './payment-method-schema';
 import { PaymentFormSchema } from './payment-form-schema';
 import { CreditStatusSchema } from './credit-status-schema';
+import { EventTypeSchema } from './event-type-schema';
 
 // ----------------------------------------------------------------------
 
 export type IPaymentMethod = z.infer<typeof PaymentMethodSchema>;
 
-export type IPaymentForm= z.infer<typeof PaymentFormSchema>;
+export type IPaymentForm = z.infer<typeof PaymentFormSchema>;
+
+export type IEventType = z.infer<typeof EventTypeSchema>;
 
 export type IRole = z.infer<typeof RoleSchema>;
 

@@ -12,4 +12,6 @@ export * from './role-schema';
 
 export * from './type-schema';
 
+export * from './event-type-schema';
+
 export * from './sub-schema-types';

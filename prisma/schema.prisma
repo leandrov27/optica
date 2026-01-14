@@ -25,19 +25,22 @@ model User {
 }
 
 model Client {
-    id           Int        @id @default(autoincrement()) @map("id_cliente")
-    displayName  String     @map("nombre_apellido")
-    birthDate    String?    @map("fecha_nacimiento")
-    email        String?    @unique @map("correo") @db.VarChar(150)
-    phone        String     @unique @map("telefono") @db.VarChar(20)
-    type         ClientType
-    observations String?    @map("observaciones")
-    createdAt    DateTime   @default(now()) @map("creado_en") @db.DateTime(0)
+    id              Int        @id @default(autoincrement()) @map("id_cliente")
+    displayName     String     @map("nombre_apellido")
+    birthDate       DateTime?  @map("fecha_nacimiento")
+    email           String?    @unique @map("correo") @db.VarChar(150)
+    phone           String     @unique @map("telefono") @db.VarChar(20)
+    type            ClientType
+    observations    String?    @map("observaciones")
+    acceptsWhatsapp Boolean    @default(true) @map("acepta_whatsapp")
+
+    createdAt DateTime @default(now()) @map("creado_en") @db.DateTime(0)
 
     // Relations
-    taxInfo   TaxInfo?
-    diagnoses Diagnosis[]
-    saleNotes SaleNote[]
+    taxInfo     TaxInfo?
+    diagnoses   Diagnosis[]
+    messageLogs MessageLog[]
+    saleNotes   SaleNote[]
 
     @@map("clientes")
 }
@@ -45,9 +48,9 @@ model Client {
 model TaxInfo {
     id            Int     @id @default(autoincrement()) @map("id_fiscal")
     clientId      Int     @unique @map("id_cliente")
-    rfc           String? @db.VarChar(13)
+    rfc           String? @db.VarChar(20)
     businessName  String  @map("razon_social") @db.VarChar(200)
-    postalCode    String? @map("cp") @db.Char(5)
+    postalCode    String? @map("cp") @db.Char(20)
     taxRegime     String? @map("regimen_fiscal") @db.VarChar(100)
     cfdiUse       String? @map("uso_cfdi") @db.VarChar(10)
     paymentMethod String? @map("metodo_pago") @db.VarChar(5)
@@ -182,6 +185,83 @@ model NoteDetail {
     @@map("detalles_nota")
 }
 
+model WhatsAppTemplate {
+    id             Int            @id @default(autoincrement())
+    metaTemplateId String         @unique @map("meta_template_id")
+    name           String
+    language       String
+    category       String
+    status         TemplateStatus
+
+    componentsJson Json @map("components_json")
+    variablesCount Int  @map("variables_count")
+
+    isActive Boolean @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    events MessageEvent[]
+    logs   MessageLog[]
+
+    @@map("whatsapp_templates")
+}
+
+model MessageEvent {
+    id        Int       @id @default(autoincrement())
+    name      String
+    type      EventType
+    eventDate DateTime?
+    isActive  Boolean   @default(true)
+
+    headerImageUrl String? @map("header_image_url")
+
+    templateId Int
+    template   WhatsAppTemplate @relation(fields: [templateId], references: [id])
+
+    createdAt        DateTime          @default(now())
+    messageLogs      MessageLog[]
+    messageVariables MessageVariable[]
+
+    @@map("eventos_mensaje")
+}
+
+model MessageLog {
+    id Int @id @default(autoincrement())
+
+    clientId   Int
+    eventId    Int
+    templateId Int
+
+    phone  String
+    status MessageStatus
+    error  String?
+
+    sentAt  DateTime @default(now())
+    sentDay DateTime
+
+    client   Client           @relation(fields: [clientId], references: [id])
+    event    MessageEvent     @relation(fields: [eventId], references: [id])
+    template WhatsAppTemplate @relation(fields: [templateId], references: [id])
+
+    @@unique([clientId, eventId, sentDay])
+    @@map("mensajes_log")
+}
+
+model MessageVariable {
+    id        Int            @id @default(autoincrement())
+    eventId   Int
+    position  Int
+    source    VariableSource
+    value     String?
+    fieldPath String?
+
+    event MessageEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+    @@unique([eventId, position])
+    @@map("mensaje_variables")
+}
+
 model Setting {
     id              Int     @id @default(autoincrement()) @map("id_ajustes")
     name            String  @default("EmpreSys") @map("nombre")
@@ -213,6 +293,29 @@ enum Status {
 enum Role {
     ADMIN
     CLIENT
+}
+
+enum TemplateStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    DISABLED
+}
+
+enum EventType {
+    BIRTHDAY
+    CUSTOM
+}
+
+enum MessageStatus {
+    SENT
+    FAILED
+    SKIPPED
+}
+
+enum VariableSource {
+    CLIENT
+    FIXED
 }
 
 enum CreditStatus {

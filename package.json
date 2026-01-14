@@ -6,9 +6,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "dev2": "next dev --hostname localhost -p 4000",
+    "dev2": "next dev --hostname 192.168.100.136 -p 4000",
     "start": "next start",
-    "start2": "next start --hostname localhost -p 4000",
+    "start2": "next start --hostname 192.168.100.136 -p 4000",
     "build": "next build",
     "postinstall": "prisma generate",
     "export": "yarn build && next export -o _static",

@@ -1,115 +1,106 @@
 // next
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 // libs
-import db from "src/libs/prisma";
-import { dayjs } from "src/libs/dayjs";
+import db from 'src/libs/prisma';
+import { dayjs } from 'src/libs/dayjs';
 // utils
-import { verifyTokenHasRole } from "src/utils/jwt-utils";
+import { verifyTokenHasRole } from 'src/utils/jwt-utils';
 // schemas
-import { CreateUpdateClientSchema, type ICreateUpdateClientPayload } from "src/core/schemas";
+import { CreateUpdateClientSchema, type ICreateUpdateClientPayload } from 'src/core/schemas';
 
 // ----------------------------------------------------------------------
 
 //* CREATE CLIENT
 export async function POST(request: Request) {
-    const tokenVerification = verifyTokenHasRole(request, 'ADMIN');
-    if (!tokenVerification.isValid) {
-        return NextResponse.json(
-            { message: tokenVerification.message },
-            { status: tokenVerification.status }
-        );
+  const tokenVerification = verifyTokenHasRole(request, 'ADMIN');
+  if (!tokenVerification.isValid) {
+    return NextResponse.json(
+      { message: tokenVerification.message },
+      { status: tokenVerification.status }
+    );
+  }
+
+  try {
+    const data: ICreateUpdateClientPayload = await request.json();
+    const validationSchema = CreateUpdateClientSchema.safeParse(data);
+
+    if (!validationSchema.success) {
+      const errorMessages = validationSchema.error.issues
+        .map((err) => `${err.path.join('.')}: ${err.message}`)
+        .join('; ');
+
+      return NextResponse.json({ message: errorMessages }, { status: 400 });
     }
 
-    try {
-        const data: ICreateUpdateClientPayload = await request.json();
-        const validationSchema = CreateUpdateClientSchema.safeParse(data);
+    const parsed = validationSchema.data;
 
-        if (!validationSchema.success) {
-            const errorMessages = validationSchema.error.issues
-                .map((err) => `${err.path.join('.')}: ${err.message}`)
-                .join('; ');
+    const clientData = {
+      displayName: parsed.displayName,
+      birthDate: parsed.birthDate,
+      email: parsed.email,
+      phone: parsed.phone,
+      type: parsed.type,
+      observations: parsed.observations,
+    };
 
-            return NextResponse.json(
-                { message: errorMessages },
-                { status: 400 }
-            );
-        }
+    const diagnosesData = parsed.diagnoses.map((diagnose) => ({
+      date: dayjs(diagnose.date).utc().toDate(),
+      rightSphere: diagnose.rightSphere || null,
+      rightCylinder: diagnose.rightCylinder || null,
+      rightAxis: diagnose.rightAxis || null,
+      leftSphere: diagnose.leftSphere || null,
+      leftCylinder: diagnose.leftCylinder || null,
+      leftAxis: diagnose.leftAxis || null,
+      di: diagnose.di || null,
+      addition: diagnose.addition || null,
+      add: diagnose.add || null,
+      addi: diagnose.addi || null,
+      notes: diagnose.notes || null,
+    }));
 
-        const parsed = validationSchema.data;
+    if (parsed.enableTaxInfo) {
+      const businessName = parsed.businessName || parsed.displayName;
 
-        const clientData = {
-            displayName: parsed.displayName,
-            birthDate: parsed.birthDate,
-            email: parsed.email,
-            phone: parsed.phone,
-            type: parsed.type,
-            observations: parsed.observations,
-        };
-
-        const diagnosesData = parsed.diagnoses.map(diagnose => ({
-            date: dayjs(diagnose.date).toDate(),
-            rightSphere: diagnose.rightSphere || null,
-            rightCylinder: diagnose.rightCylinder || null,
-            rightAxis: diagnose.rightAxis || null,
-            leftSphere: diagnose.leftSphere || null,
-            leftCylinder: diagnose.leftCylinder || null,
-            leftAxis: diagnose.leftAxis || null,
-            di: diagnose.di || null,
-            addition: diagnose.addition || null,
-            add: diagnose.add || null,
-            addi: diagnose.addi || null,
-            notes: diagnose.notes || null,
-        }));
-
-        if (parsed.enableTaxInfo) {
-            const businessName = parsed.businessName || parsed.displayName;
-
-            await db.client.create({
-                data: {
-                    ...clientData,
-                    taxInfo: {
-                        create: {
-                            rfc: parsed.rfc || null,
-                            businessName: businessName,
-                            postalCode: parsed.postalCode || null,
-                            taxRegime: parsed.taxRegime || null,
-                            cfdiUse: parsed.cfdiUse || null,
-                            paymentMethod: parsed.paymentMethod || null,
-                            billingEmail: parsed.billingEmail || null,
-                            address: parsed.address || null,
-                        }
-                    },
-                    diagnoses: {
-                        create: diagnosesData
-                    }
-                },
-            });
-        } else {
-            await db.client.create({
-                data: {
-                    ...clientData,
-                    diagnoses: {
-                        create: diagnosesData
-                    }
-                }
-            });
-        }
-
-        return NextResponse.json(
-            { message: 'Cliente registrado correctamente' },
-            { status: 201 }
-        );
-    } catch (error: any) {
-        if (error.code === 'P2002') {
-            return NextResponse.json(
-                { message: 'Teléfono, RFC o email ya existen' },
-                { status: 409 }
-            );
-        }
-
-        return NextResponse.json(
-            { message: error.message || 'Internal server error' },
-            { status: 500 }
-        );
+      await db.client.create({
+        data: {
+          ...clientData,
+          taxInfo: {
+            create: {
+              rfc: parsed.rfc || null,
+              businessName: businessName,
+              postalCode: parsed.postalCode || null,
+              taxRegime: parsed.taxRegime || null,
+              cfdiUse: parsed.cfdiUse || null,
+              paymentMethod: parsed.paymentMethod || null,
+              billingEmail: parsed.billingEmail || null,
+              address: parsed.address || null,
+            },
+          },
+          diagnoses: {
+            create: diagnosesData,
+          },
+        },
+      });
+    } else {
+      await db.client.create({
+        data: {
+          ...clientData,
+          diagnoses: {
+            create: diagnosesData,
+          },
+        },
+      });
     }
+
+    return NextResponse.json({ message: 'Cliente registrado correctamente' }, { status: 201 });
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return NextResponse.json({ message: 'Teléfono, RFC o email ya existen' }, { status: 409 });
+    }
+
+    return NextResponse.json(
+      { message: error.message || 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }
