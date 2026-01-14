@@ -1,8 +1,8 @@
-name: WhatsApp Cron
+name: WhatsApp CronJob
 
 on:
   schedule:
-    - cron: '0 23 * * *'
+    - cron: '0 24 * * *'
   workflow_dispatch:
 
 jobs:
@@ -13,4 +13,4 @@ jobs:
         run: |
           curl -X GET \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-          https://optica-rose.vercel.app/api/cron
+          https://optica-rose.vercel.app/api/cron/whatsapp
