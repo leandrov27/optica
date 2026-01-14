@@ -2,14 +2,14 @@ name: WhatsApp CronJob
 
 on:
   schedule:
-    - cron: '0 24 * * *'
+    - cron: '30 23 * * *'
   workflow_dispatch:
 
 jobs:
   run-cron:
     runs-on: ubuntu-latest
     steps:
-      - name: Call WhatsApp cron
+      - name: Call WhatsApp CronJob
         run: |
           curl -X GET \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
