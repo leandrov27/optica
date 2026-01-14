@@ -20,6 +20,10 @@ function isLeapYear(year: number) {
 
 // ----------------------------------------------------------------------
 
+export const dynamic = 'force-dynamic';
+
+// ----------------------------------------------------------------------
+
 export async function GET(req: Request) {
   const auth = req.headers.get('authorization');
 
