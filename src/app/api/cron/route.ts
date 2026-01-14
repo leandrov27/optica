@@ -6,7 +6,7 @@ import { sendWhatsAppMessage } from 'src/libs/whatsapp';
 import { dayjs } from 'src/libs/dayjs';
 // utils
 import {
-  detectVariableLocation,
+  detectVariableLocationV2,
   resolveTemplateVariables,
 } from 'src/utils/resolveTemplateVariables';
 // schemas
@@ -91,26 +91,44 @@ export async function GET(req: Request) {
         if (parameters.some((p) => !p.text)) continue;
 
         const componentsJson = event.template.componentsJson as unknown as IComponent[];
-        const varsLocation = detectVariableLocation(componentsJson);
+        const varsLocation = detectVariableLocationV2(componentsJson);
 
-        const components = [
-          ...(varsLocation.header
-            ? [
+        // 1. Extraer la URL de la imagen desde el "example" del JSON de la plantilla
+        let imageUrl = '';
+        const headerComponent = componentsJson.find(
+          (c) => c.type === 'HEADER' && c.format === 'IMAGE'
+        );
+
+        if (headerComponent && headerComponent.example?.header_handle?.[0]) {
+          imageUrl = headerComponent.example.header_handle[0];
+        }
+
+        const components = [];
+
+        // 2. Configurar el Header con la imagen encontrada
+        if (varsLocation.header && varsLocation.headerFormat === 'IMAGE') {
+          if (imageUrl) {
+            components.push({
+              type: 'header',
+              parameters: [
                 {
-                  type: 'header' as const,
-                  parameters,
+                  type: 'image',
+                  image: {
+                    link: event.headerImageUrl,
+                  },
                 },
-              ]
-            : []),
-          ...(varsLocation.body
-            ? [
-                {
-                  type: 'body' as const,
-                  parameters,
-                },
-              ]
-            : []),
-        ];
+              ],
+            });
+          }
+        }
+
+        // 3. Configurar el Body con las variables de texto
+        if (varsLocation.body) {
+          components.push({
+            type: 'body',
+            parameters: parameters,
+          });
+        }
 
         const finalComponents = components.length > 0 ? components : undefined;
 

@@ -9,7 +9,6 @@ import { sendWhatsAppMessage } from 'src/libs/whatsapp';
 // utils
 import { verifyTokenHasRole } from 'src/utils/jwt-utils';
 import {
-  detectVariableLocation,
   detectVariableLocationV2,
   resolveTemplateVariables,
 } from 'src/utils/resolveTemplateVariables';
