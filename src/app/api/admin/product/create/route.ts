@@ -7,7 +7,7 @@ import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
 import { CreateProductSchema, type ICreateProductPayload } from "src/core/schemas";
 // generated
-import { Decimal } from "src/generated/prisma/runtime/client";
+import { Prisma } from "prigen/client";
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         await db.product.create({
             data: {
                 ...productData,
-                price: new Decimal(parsed.price),
+                price: new Prisma.Decimal(parsed.price),
             },
         });
 

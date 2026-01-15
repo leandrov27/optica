@@ -7,7 +7,7 @@ import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
 import { UpdateNoteSchema, type IUpdateNotePayload } from "src/core/schemas";
 // generated
-import { Decimal } from "src/generated/prisma/runtime/client";
+import { Prisma } from 'prigen/client';
 
 // ----------------------------------------------------------------------
 
@@ -52,9 +52,9 @@ export async function POST(request: Request, { params }: { params: { nid: string
         }
 
         // Asegurar precisión decimal
-        const subtotal = new Decimal(parsed.subtotal);
-        const discount = new Decimal(parsed.discount);
-        const total = new Decimal(parsed.total);
+        const subtotal = new Prisma.Decimal(parsed.subtotal);
+        const discount = new Prisma.Decimal(parsed.discount);
+        const total = new Prisma.Decimal(parsed.total);
 
         await db.$transaction(async (tx) => {
             await tx.saleNote.update({
@@ -81,10 +81,10 @@ export async function POST(request: Request, { params }: { params: { nid: string
                         noteId: nid,
                         productId: detail.productId,
                         quantity: detail.quantity,
-                        unitPrice: new Decimal(detail.unitPrice),
-                        finalPrice: new Decimal(detail.finalPrice),
-                        discountPct: new Decimal(detail.discountPct ?? 0),
-                        amount: new Decimal(detail.amount),
+                        unitPrice: new Prisma.Decimal(detail.unitPrice),
+                        finalPrice: new Prisma.Decimal(detail.finalPrice),
+                        discountPct: new Prisma.Decimal(detail.discountPct ?? 0),
+                        amount: new Prisma.Decimal(detail.amount),
                     })),
                 });
             }

@@ -30,6 +30,9 @@
         "name": "next"
       }
     ],
+    "paths": {
+      "prigen/*": ["generated/prisma/*"] 
+    },
   },
   "include": [
     "next-env.d.ts",

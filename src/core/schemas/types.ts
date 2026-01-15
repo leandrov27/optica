@@ -11,7 +11,7 @@ import {
   type MessageEvent,
   type SatCode,
   type WhatsAppTemplate,
-} from 'src/generated/prisma';
+} from 'prigen/client';
 //
 import {
   CreateUpdateClientSchema,

@@ -33,14 +33,14 @@ import {
   type ICreateUpdateEventVariablePayload,
 } from 'src/core/schemas';
 // prisma
-import { type VariableSource } from 'src/generated/prisma';
+import { type VariableSource } from 'prigen/client';
 // libs
 import ax, { API_ENDPOINTS } from 'src/libs/fetcher';
 // pkgs
 import { toast } from 'sonner';
 import { Alert } from '@mui/material';
 // prisma
-import { type JsonValue } from 'src/generated/prisma/runtime/client';
+import { type JsonValue } from 'prigen/internal/prismaNamespaceBrowser';
 
 // ----------------------------------------------------------------------
 

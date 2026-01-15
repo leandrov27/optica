@@ -11,7 +11,7 @@ import { type ITemplate } from 'src/core/schemas';
 // utils
 import { extractVariablesFromComponents } from 'src/utils/resolveTemplateVariables';
 // prisma
-import { type TemplateStatus } from 'src/generated/prisma';
+import { type TemplateStatus } from "prigen/client";
 
 // ----------------------------------------------------------------------
 

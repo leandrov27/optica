@@ -1,7 +1,7 @@
 // schemas
 import { type IComponent } from 'src/core/schemas';
 // prisma
-import { type Client, type MessageVariable } from 'src/generated/prisma/client';
+import { type Client, type MessageVariable } from 'prigen/client';
 
 // ----------------------------------------------------------------------
 

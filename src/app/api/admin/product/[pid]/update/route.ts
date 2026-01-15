@@ -7,7 +7,7 @@ import { verifyTokenHasRole } from "src/utils/jwt-utils";
 // schemas
 import { UpdateProductSchema, type IUpdateProductPayload } from "src/core/schemas";
 // generated
-import { Decimal } from "src/generated/prisma/runtime/client";
+import { Prisma } from "prigen/client";
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ export async function PUT(request: Request, { params }: { params: { pid: string 
             where: { id: pid },
             data: {
                 ...productData,
-                price: new Decimal(parsed.price),
+                price: new Prisma.Decimal(parsed.price),
             },
             select: {
                 code: true

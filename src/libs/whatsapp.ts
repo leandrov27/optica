@@ -6,7 +6,7 @@ import {
   WABA_VERSION,
 } from 'src/config/config-server';
 // prisma
-import { type WhatsAppTemplate } from 'src/generated/prisma/client';
+import { type WhatsAppTemplate } from 'prigen/client';
 
 // ----------------------------------------------------------------------
 
