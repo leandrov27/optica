@@ -40,7 +40,7 @@ import ax, { API_ENDPOINTS } from 'src/libs/fetcher';
 import { toast } from 'sonner';
 import { Alert } from '@mui/material';
 // prisma
-import { type JsonValue } from 'prigen/internal/prismaNamespaceBrowser';
+import { type JsonValue } from 'prigen/runtime/client';
 
 // ----------------------------------------------------------------------
 
