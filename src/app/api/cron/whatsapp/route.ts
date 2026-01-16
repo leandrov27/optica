@@ -92,44 +92,30 @@ export async function GET(req: Request) {
         const varsLocation = detectVariableLocationV2(componentsJson);
 
         const components = [];
-
-        /**
-         * LÓGICA DE HEADER
-         */
         let bodyStartIndex = 0;
 
-        if (varsLocation.header) {
-          if (varsLocation.headerFormat === 'IMAGE') {
-            // Caso Imagen: No usa variables de texto, usa la URL
+        // 1. HEADER: Solo texto con variable {{1}}
+        if (varsLocation.header && varsLocation.headerFormat === 'TEXT') {
+          const headerParam = allParameters[0];
+          if (headerParam) {
             components.push({
               type: 'header',
-              parameters: [
-                {
-                  type: 'image',
-                  image: { link: event.headerImageUrl },
-                },
-              ],
+              parameters: [headerParam],
             });
-          } else if (varsLocation.headerFormat === 'TEXT') {
-            // Caso Texto con variables: Meta espera que la primera variable sea para el Header
-            const headerParam = allParameters[0];
-            if (headerParam) {
-              components.push({
-                type: 'header',
-                parameters: [headerParam],
-              });
-              bodyStartIndex = 1; // La siguiente variable será para el Body
-            }
+            bodyStartIndex = 1; // Ya usamos la primera variable
           }
         }
+        // 1.1 HEADER: Caso imagen (se mantiene igual)
+        else if (varsLocation.header && varsLocation.headerFormat === 'IMAGE') {
+          components.push({
+            type: 'header',
+            parameters: [{ type: 'image', image: { link: event.headerImageUrl } }],
+          });
+        }
 
-        /**
-         * LÓGICA DE BODY
-         */
+        // 2. BODY: Solo se agregan parámetros si la plantilla los espera
         if (varsLocation.body) {
-          // Extraemos solo las variables que corresponden al body
           const bodyParameters = allParameters.slice(bodyStartIndex);
-
           if (bodyParameters.length > 0) {
             components.push({
               type: 'body',
