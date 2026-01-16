@@ -56,26 +56,6 @@ export function countVariables(components: IComponent[]) {
   return extractVariablesFromComponents(components).length;
 }
 
-export function detectVariableLocation(components: IComponent[]) {
-  let hasHeaderVars = false;
-  let hasBodyVars = false;
-
-  for (const c of components) {
-    if (c.type === 'HEADER' && c.format === 'TEXT' && typeof c.text === 'string') {
-      if (c.text.includes('{{')) hasHeaderVars = true;
-    }
-
-    if (c.type === 'BODY' && typeof c.text === 'string') {
-      if (c.text.includes('{{')) hasBodyVars = true;
-    }
-  }
-
-  return {
-    header: hasHeaderVars,
-    body: hasBodyVars,
-  };
-}
-
 export function detectVariableLocationV2(components: IComponent[]) {
   let hasHeaderVars = false;
   let hasBodyVars = false;
@@ -101,3 +81,25 @@ export function detectVariableLocationV2(components: IComponent[]) {
     headerFormat,
   };
 }
+
+/*
+export function detectVariableLocation(components: IComponent[]) {
+  let hasHeaderVars = false;
+  let hasBodyVars = false;
+
+  for (const c of components) {
+    if (c.type === 'HEADER' && c.format === 'TEXT' && typeof c.text === 'string') {
+      if (c.text.includes('{{')) hasHeaderVars = true;
+    }
+
+    if (c.type === 'BODY' && typeof c.text === 'string') {
+      if (c.text.includes('{{')) hasBodyVars = true;
+    }
+  }
+
+  return {
+    header: hasHeaderVars,
+    body: hasBodyVars,
+  };
+}*/
+

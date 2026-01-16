@@ -82,45 +82,42 @@ export async function GET(req: Request) {
           where: { eventId: event.id },
         });
 
-        // Obtenemos todos los parámetros resueltos (textos finales)
-        const allParameters = resolveTemplateVariables({
-          client,
-          variables,
-        });
-
+        const allParameters = resolveTemplateVariables({ client, variables });
         const componentsJson = event.template.componentsJson as unknown as IComponent[];
-        const varsLocation = detectVariableLocationV2(componentsJson);
+
+        // --- AQUÍ ESTÁ EL CAMBIO CRÍTICO ---
+        // 1. Identificamos cuántas variables REALES pide Meta en cada sección
+        const headerComp = componentsJson.find((c) => c.type === 'HEADER');
+        const bodyComp = componentsJson.find((c) => c.type === 'BODY');
+
+        const headerVarsCount = headerComp?.text?.match(/\{\{\d+\}\}/g)?.length || 0;
+        const bodyVarsCount = bodyComp?.text?.match(/\{\{\d+\}\}/g)?.length || 0;
 
         const components = [];
-        let bodyStartIndex = 0;
+        let currentIndex = 0;
 
-        // 1. HEADER: Solo texto con variable {{1}}
-        if (varsLocation.header && varsLocation.headerFormat === 'TEXT') {
-          const headerParam = allParameters[0];
-          if (headerParam) {
+        // 2. HEADER: Solo mandamos parámetros si el texto tiene {{}} o es media
+        if (headerComp) {
+          if (headerComp.format === 'IMAGE') {
             components.push({
               type: 'header',
-              parameters: [headerParam],
+              parameters: [{ type: 'image', image: { link: event.headerImageUrl } }],
             });
-            bodyStartIndex = 1; // Ya usamos la primera variable
+          } else if (headerComp.format === 'TEXT' && headerVarsCount > 0) {
+            // Tomamos exactamente la cantidad de variables que el texto del header pide
+            const headerParams = allParameters.slice(currentIndex, currentIndex + headerVarsCount);
+            if (headerParams.length > 0) {
+              components.push({ type: 'header', parameters: headerParams });
+              currentIndex += headerVarsCount;
+            }
           }
         }
-        // 1.1 HEADER: Caso imagen (se mantiene igual)
-        else if (varsLocation.header && varsLocation.headerFormat === 'IMAGE') {
-          components.push({
-            type: 'header',
-            parameters: [{ type: 'image', image: { link: event.headerImageUrl } }],
-          });
-        }
 
-        // 2. BODY: Solo se agregan parámetros si la plantilla los espera
-        if (varsLocation.body) {
-          const bodyParameters = allParameters.slice(bodyStartIndex);
-          if (bodyParameters.length > 0) {
-            components.push({
-              type: 'body',
-              parameters: bodyParameters,
-            });
+        // 3. BODY: Solo mandamos exactamente la cantidad de variables que el body pide
+        if (bodyComp && bodyVarsCount > 0) {
+          const bodyParams = allParameters.slice(currentIndex, currentIndex + bodyVarsCount);
+          if (bodyParams.length > 0) {
+            components.push({ type: 'body', parameters: bodyParams });
           }
         }
 
