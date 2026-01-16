@@ -10,7 +10,23 @@ const createPrismaClient = () => {
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
-    connectionLimit: 5,
+    connectionLimit: 10,
+    allowPublicKeyRetrieval: process.env.NODE_ENV === 'development',
+    ssl: process.env.NODE_ENV === 'production',
+    logger: {
+      network: (info) => {
+        console.log('PrismaAdapterNetwork', info);
+      },
+      query: (info) => {
+        console.log('PrismaAdapterQuery', info);
+      },
+      error: (error) => {
+        console.error('PrismaAdapterError', error);
+      },
+      warning: (info) => {
+        console.warn('PrismaAdapterWarning', info);
+      },
+    },
   });
 
   return new PrismaClient({ adapter });
