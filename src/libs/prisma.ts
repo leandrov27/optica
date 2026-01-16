@@ -11,8 +11,7 @@ const createPrismaClient = () => {
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
     connectionLimit: 10,
-    allowPublicKeyRetrieval: process.env.NODE_ENV === 'development',
-    ssl: process.env.NODE_ENV === 'production',
+    allowPublicKeyRetrieval: true,
     logger: {
       network: (info) => {
         console.log('PrismaAdapterNetwork', info);
