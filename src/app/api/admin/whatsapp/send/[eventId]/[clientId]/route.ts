@@ -49,48 +49,60 @@ export async function POST(
       where: { eventId: event.id },
     });
 
-    const parameters = resolveTemplateVariables({ client, variables });
-
-    if (parameters.some((p) => !p.text)) {
-      return NextResponse.json({ error: 'Missing template variables' }, { status: 400 });
-    }
+    // Obtenemos todos los parámetros resueltos (textos finales)
+    const allParameters = resolveTemplateVariables({
+      client,
+      variables,
+    });
 
     const componentsJson = event.template.componentsJson as unknown as IComponent[];
     const varsLocation = detectVariableLocationV2(componentsJson);
 
-    // 1. Extraer la URL de la imagen desde el "example" del JSON de la plantilla
-    let imageUrl = '';
-    const headerComponent = componentsJson.find((c) => c.type === 'HEADER' && c.format === 'IMAGE');
-
-    if (headerComponent && headerComponent.example?.header_handle?.[0]) {
-      imageUrl = headerComponent.example.header_handle[0];
-    }
-
     const components = [];
 
-    // 2. Configurar el Header con la imagen encontrada
-    if (varsLocation.header && varsLocation.headerFormat === 'IMAGE') {
-      if (imageUrl) {
+    /**
+     * LÓGICA DE HEADER
+     */
+    let bodyStartIndex = 0;
+
+    if (varsLocation.header) {
+      if (varsLocation.headerFormat === 'IMAGE') {
+        // Caso Imagen: No usa variables de texto, usa la URL
         components.push({
           type: 'header',
           parameters: [
             {
               type: 'image',
-              image: {
-                link: event.headerImageUrl,
-              },
+              image: { link: event.headerImageUrl },
             },
           ],
         });
+      } else if (varsLocation.headerFormat === 'TEXT') {
+        // Caso Texto con variables: Meta espera que la primera variable sea para el Header
+        const headerParam = allParameters[0];
+        if (headerParam) {
+          components.push({
+            type: 'header',
+            parameters: [headerParam],
+          });
+          bodyStartIndex = 1; // La siguiente variable será para el Body
+        }
       }
     }
 
-    // 3. Configurar el Body con las variables de texto
+    /**
+     * LÓGICA DE BODY
+     */
     if (varsLocation.body) {
-      components.push({
-        type: 'body',
-        parameters: parameters,
-      });
+      // Extraemos solo las variables que corresponden al body
+      const bodyParameters = allParameters.slice(bodyStartIndex);
+
+      if (bodyParameters.length > 0) {
+        components.push({
+          type: 'body',
+          parameters: bodyParameters,
+        });
+      }
     }
 
     const finalComponents = components.length > 0 ? components : undefined;

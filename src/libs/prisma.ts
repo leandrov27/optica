@@ -12,20 +12,6 @@ const createPrismaClient = () => {
     database: process.env.DATABASE_NAME,
     connectionLimit: 10,
     allowPublicKeyRetrieval: true,
-    logger: {
-      network: (info) => {
-        console.log('PrismaAdapterNetwork', info);
-      },
-      query: (info) => {
-        console.log('PrismaAdapterQuery', info);
-      },
-      error: (error) => {
-        console.error('PrismaAdapterError', error);
-      },
-      warning: (info) => {
-        console.warn('PrismaAdapterWarning', info);
-      },
-    },
   });
 
   return new PrismaClient({ adapter });
