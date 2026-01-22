@@ -39,7 +39,13 @@ export async function GET(req: Request) {
   const events = await db.messageEvent.findMany({
     where: {
       isActive: true,
-      OR: [{ type: 'BIRTHDAY' }, { eventDate: { lte: today.toDate() } }],
+      OR: [
+        { type: 'BIRTHDAY' },
+        {
+          type: { not: 'BIRTHDAY' },
+          eventDate: today.toDate(),
+        },
+      ],
     },
     include: { template: true },
   });

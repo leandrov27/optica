@@ -235,6 +235,10 @@ export type IProductData = {
   description: string;
   price: any;
   satCodeId: number;
+  satCode: {
+    name: string;
+    codeSat: string;
+  } | null;
   category: {
     id: number;
     name: string;
