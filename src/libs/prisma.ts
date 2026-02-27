@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-import { PrismaClient } from 'prigen/client';
+import { PrismaClient } from 'prigen/index';
 
 // ----------------------------------------------------------------------
 

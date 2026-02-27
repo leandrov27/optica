@@ -37,13 +37,14 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid event' }, { status: 400 });
     }
 
+    /*
     const client = await db.client.findUnique({
       where: { id: Number(params.clientId) },
     });
 
     if (!client?.phone) {
       return NextResponse.json({ error: 'Client has no phone' }, { status: 400 });
-    }
+    }*/
 
     const variables = await db.messageVariable.findMany({
       where: { eventId: event.id },
@@ -51,7 +52,8 @@ export async function POST(
 
     // Obtenemos todos los parámetros resueltos (textos finales)
     const allParameters = resolveTemplateVariables({
-      client,
+      //client,
+      client: null!,
       variables,
     });
 
