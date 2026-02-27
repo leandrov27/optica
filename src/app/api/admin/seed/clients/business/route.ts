@@ -11,6 +11,19 @@ import * as XLSX from 'xlsx';
 
 // ----------------------------------------------------------------------
 
+function normalizarTexto(texto: any): string {
+  if (!texto) return '';
+  return texto
+    .toString()
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/[^\w\s]/g, '')
+    .trim();
+}
+
 export async function POST(request: Request) {
   const token = request.headers.get('authorization');
   if (token !== `Bearer ${JWT_SECRET}`) {
@@ -65,22 +78,8 @@ export async function POST(request: Request) {
     let coincidenciasPorDisplayName = 0;
     let errores = [];
 
-    // Función para normalizar texto (quitar acentos, espacios)
-    function normalizarTexto(texto: any) {
-      if (!texto) return '';
-      return texto
-        .toString()
-        .trim()
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
-        .replace(/\s+/g, ' ') // Unificar espacios
-        .replace(/[^\w\s]/g, '') // Eliminar caracteres especiales
-        .trim();
-    }
-
     // Función para buscar cliente
-    function buscarCliente(displayNameExcel: any) {
+    const buscarCliente = (displayNameExcel: any) => {
       if (!displayNameExcel) return null;
 
       const displayNameExcelClean = String(displayNameExcel).trim().toLowerCase();
@@ -101,7 +100,7 @@ export async function POST(request: Request) {
       }
 
       // 3. Búsqueda parcial (como último recurso)
-      for (const [key, clienteBD] of mapaPorDisplayNameNormalizado.entries()) {
+      for (const [key, clienteBD] of Array.from(mapaPorDisplayNameNormalizado.entries())) {
         if (
           displayNameExcelNormalizado.includes(key) ||
           key.includes(displayNameExcelNormalizado)
@@ -117,7 +116,7 @@ export async function POST(request: Request) {
       }
 
       return null;
-    }
+    };
 
     // Procesar fila por fila
     for (let i = 0; i < rows.length; i++) {
@@ -202,7 +201,7 @@ export async function POST(request: Request) {
 
         if (taxInfoExistente) {
           // Actualizar solo campos no nulos del Excel
-          const datosActualizacion = {};
+          const datosActualizacion: Record<string, any> = {};
           Object.keys(taxInfoData).forEach((key) => {
             if (taxInfoData[key] !== null && taxInfoData[key] !== undefined) {
               if (key !== 'clientId') {
