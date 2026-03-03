@@ -50,6 +50,14 @@ export async function GET(req: Request) {
     include: { template: true },
   });
 
+  console.log(`[CRON] Found ${events.length} events for today`);
+
+  const results = {
+    sent: 0,
+    failed: 0,
+    skipped: 0,
+  };
+
   for (const event of events) {
     const clients = await db.client.findMany({
       where: buildClientWhere(event),
@@ -59,88 +67,69 @@ export async function GET(req: Request) {
       event.type === 'BIRTHDAY'
         ? clients.filter((client) => {
             if (!client.birthDate) return false;
-
             const birth = dayjs(client.birthDate).utc();
             const isLeapDay = birth.month() === 1 && birth.date() === 29;
-
             if (isLeapDay) {
               return todayMonth === 1 && todayDate === 28 && !isLeapYear(today.year());
             }
-
             return birth.month() === todayMonth && birth.date() === todayDate;
           })
         : clients;
 
-    for (const client of filteredClients) {
-      const alreadySent = await db.messageLog.findFirst({
-        where: {
-          eventId: event.id,
-          clientId: client.id,
-          status: 'SENT',
-          sentDay: today.toDate(),
-        },
-      });
+    console.log(
+      `[CRON] Event "${event.id}" (${event.type}): ${filteredClients.length} clients to process`
+    );
 
-      if (alreadySent) continue;
+    for (const client of filteredClients) {
+      console.log(`[CRON] Processing client ${client.id} - phone: ${client.phone}`);
 
       try {
+        const alreadySent = await db.messageLog.findFirst({
+          where: {
+            eventId: event.id,
+            clientId: client.id,
+            status: 'SENT',
+            sentDay: today.toDate(),
+          },
+        });
+
+        if (alreadySent) {
+          console.log(`[CRON] Client ${client.id} already received message today, skipping`);
+          results.skipped++;
+          continue;
+        }
+
         const variables = await db.messageVariable.findMany({
           where: { eventId: event.id },
         });
 
-        // Obtenemos todos los parámetros resueltos (textos finales)
-        const allParameters = resolveTemplateVariables({
-          client,
-          variables,
-        });
+        const allParameters = resolveTemplateVariables({ client, variables });
 
         const componentsJson = event.template.componentsJson as unknown as IComponent[];
         const varsLocation = detectVariableLocationV2(componentsJson);
 
         const components = [];
-
-        /**
-         * LÓGICA DE HEADER
-         */
         let bodyStartIndex = 0;
 
         if (varsLocation.header) {
           if (varsLocation.headerFormat === 'IMAGE') {
-            // Caso Imagen: No usa variables de texto, usa la URL
             components.push({
               type: 'header',
-              parameters: [
-                {
-                  type: 'image',
-                  image: { link: event.headerImageUrl },
-                },
-              ],
+              parameters: [{ type: 'image', image: { link: event.headerImageUrl } }],
             });
           } else if (varsLocation.headerFormat === 'TEXT') {
-            // Caso Texto con variables: Meta espera que la primera variable sea para el Header
             const headerParam = allParameters[0];
             if (headerParam) {
-              components.push({
-                type: 'header',
-                parameters: [headerParam],
-              });
-              bodyStartIndex = 1; // La siguiente variable será para el Body
+              components.push({ type: 'header', parameters: [headerParam] });
+              bodyStartIndex = 1;
             }
           }
         }
 
-        /**
-         * LÓGICA DE BODY
-         */
         if (varsLocation.body) {
-          // Extraemos solo las variables que corresponden al body
           const bodyParameters = allParameters.slice(bodyStartIndex);
-
           if (bodyParameters.length > 0) {
-            components.push({
-              type: 'body',
-              parameters: bodyParameters,
-            });
+            components.push({ type: 'body', parameters: bodyParameters });
           }
         }
 
@@ -162,7 +151,12 @@ export async function GET(req: Request) {
             sentDay: today.toDate(),
           },
         });
+
+        console.log(`[CRON] ✅ Message sent to client ${client.id}`);
+        results.sent++;
       } catch (error: any) {
+        console.error(`[CRON] ❌ Failed for client ${client.id}:`, error.message);
+
         await db.messageLog.create({
           data: {
             clientId: client.id,
@@ -174,13 +168,19 @@ export async function GET(req: Request) {
             sentDay: today.toDate(),
           },
         });
+
+        results.failed++;
+        // El loop CONTINÚA al siguiente cliente aunque este falle
       }
     }
   }
 
-  return NextResponse.json({ ok: true });
-}
+  console.log(
+    `[CRON] Done. Sent: ${results.sent}, Failed: ${results.failed}, Skipped: ${results.skipped}`
+  );
 
+  return NextResponse.json({ ok: true, results });
+}
 function buildClientWhere(event: any) {
   if (event.type === 'BIRTHDAY') {
     return {
