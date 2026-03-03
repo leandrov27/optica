@@ -48,7 +48,7 @@ export default function EventTableRow({ row, itemsInPage }: EventTableRowProps) 
   const handleTest = async () => {
     setSendTest(true);
     try {
-      await ax.post(`/api/admin/whatsapp/send/${row.id}/1`);
+      await ax.post(`/api/admin/whatsapp/send/${row.id}`);
       toast.success('Evento de prueba enviado correctamente.');
     } catch (error) {
       console.log(error);

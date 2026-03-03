@@ -41,6 +41,9 @@ export async function sendWhatsAppMessage({ to, template, components }: SendInpu
 
   const data = await res.json();
 
+  console.log('[WA] Status:', res.status);
+  console.log('[WA] API Response:', JSON.stringify(data, null, 2));
+
   if (!res.ok) {
     throw new Error(data?.error?.message ?? 'WhatsApp API error');
   }

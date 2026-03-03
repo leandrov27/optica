@@ -241,7 +241,7 @@ model MessageLog {
     sentDay DateTime
 
     client   Client           @relation(fields: [clientId], references: [id])
-    event    MessageEvent     @relation(fields: [eventId], references: [id])
+    event    MessageEvent     @relation(fields: [eventId], references: [id], onDelete: Cascade)
     template WhatsAppTemplate @relation(fields: [templateId], references: [id])
 
     @@unique([clientId, eventId, sentDay])
